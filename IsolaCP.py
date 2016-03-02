@@ -1,5 +1,6 @@
 import tkinter
 import random
+from itertools import product
 
 #isue  shranjevanje poteze za premik in uničevanje posebej ne vem če vredu ??
 VELJAVNO = None
@@ -145,7 +146,7 @@ class Gui():
         self.velikost_celice = self.velikost_plosce/7
 
 
-    def izbira_igralce(self):
+    def izbira_igralcev(self):
         self.igralec_1 = Clovek(self)
         self.igralec_2 = Clovek(self)
         self.zacni_igro()
@@ -172,7 +173,29 @@ class Gui():
 
 
 
+
+
     def narisi_kvadratke(self):
-        pass
+        for (i, j) in product(range(7), range(7)):
+            coordX1 = (i * self.velikost_celice)
+            coordY1 = (j * self.velikost_celice)
+            coordX2 = coordX1 + self.velikost_celice
+            coordY2 = coordY1 + self.velikost_celice
+            color = "white" #if i%2 == j%2 else "black"
+            self.plosca.create_rectangle(coordX1, coordY1, coordX2, coordY2, fill = color, outline = "black")
 
 
+
+
+
+if __name__ == "__main__":
+    # Naredimo glavno okno in nastavimo ime
+    root = tkinter.Tk()
+    root.title("Isola")
+    # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
+    # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
+    # iz pomnilnika.
+    aplikacija = Gui(root, 700)
+    # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
+    # delovati, ko okno zapremo.
+    root.mainloop()
