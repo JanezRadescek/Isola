@@ -2,7 +2,7 @@ import tkinter
 import random
 from itertools import product
 
-#isue  shranjevanje poteze za premik in uničevanje posebej ne vem če vredu ??
+
 VELJAVNO = None
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -43,8 +43,10 @@ class Igra():
         return (self.polje[i][j] == VELJAVNO)
 
     def je_konec(self):
-        #treba še delat
-        pass
+        if self.porazenec() != None:
+            return True
+        else:
+            return False
 
     def pozicija_na_potezi(self):
         # vrne par koordinate igralca na potezi
@@ -74,7 +76,7 @@ class Igra():
                     poteze.append((i, j))
         return poteze
 
-    def povleci_potezo(self, i, j):
+    def naredi_pravo_potezo(self, i, j):
         if self.del_poteze == PREMIK:
             self.premik(i, j)
         else:
@@ -99,6 +101,7 @@ class Igra():
             self.shrani_pozicijo()
             self.polje[i][j] = UNICENO
             self.del_poteze = PREMIK
+            self.na_potezi = nasprotnik(self.na_potezi)
 
     def zmagovalec(self):
         pass
@@ -146,6 +149,8 @@ class Gui():
         self.velikost_celice = self.velikost_plosce/7
 
 
+
+
     def izbira_igralcev(self):
         self.igralec_1 = Clovek(self)
         self.igralec_2 = Clovek(self)
@@ -154,6 +159,10 @@ class Gui():
     def zacni_igro(self):
         """Nastavi stanje igre na zacetek igre."""
         self.igra = Igra()
+        (a1, b1) = self.igra.pozicija_1
+        (a2, b2) = self.igra.pozicija_2
+        self.narisi_igralca(a1, b1, "blue")
+        self.narisi_igralca(a2, b2, "green")
         self.igralec_1.igraj()              #sprement v random
 
     def koncaj_igro(self):
@@ -161,20 +170,33 @@ class Gui():
         print ("KONEC!")
 
     def povleci_potezo(self, i, j):
-        if self.igra.je_veljavna(i, j):
-            if self.igra.del_poteze:
+        if self.igra.del_poteze:
+            if (i, j) in self.igra.veljavne_poteze_premik():
                 self.narisi_premik(i, j)
+                self.igra.naredi_pravo_potezo(i, j)
             else:
+                print("napacna poteza")
+        else:
+            if (i, j) in self.igra.veljavne_poteze_unici():
                 self.narisi_uniceno(i, j)
-            self.igra.povleci_potezo(i, j)
-            if self.igra.je_konec():
-                self.koncaj_igro()
+                self.igra.naredi_pravo_potezo(i, j)
             else:
-                if self.igra.del_poteze == UNICENJE:
-                    if self.igra.na_potezi == IGRALEC_1:
-                        self.igralec_1.igraj()
-                    else:
-                        self.igralec_2.igraj()
+                print("napacna poteza")
+
+        if self.igra.je_konec():
+                self.koncaj_igro()
+        else:
+            if self.igra.del_poteze == UNICENJE:
+                if self.igra.na_potezi == IGRALEC_1:
+                    self.igralec_1.igraj()
+                else:
+                    self.igralec_2.igraj()
+            else:
+                if self.igra.na_potezi == IGRALEC_1:
+                    self.igralec_2.igraj()
+                else:
+                    self.igralec_1.igraj()
+
 
 
 
@@ -184,10 +206,24 @@ class Gui():
 
     def narisi_premik(self, i, j):
         #premakne igralca, ki je na potezi na izbrano polje
-        #obe figuri sta modri !!
-        (a,b) = self.igra.pozicija_na_potezi()
+        self.narisi_veljavno()
+        self.narisi_igralca(i, j)
+
+    def narisi_igralca(self, i, j, barva = None):
+        # na izbrano polje nariše igralca
+        if barva == None:
+            if self.igra.na_potezi == IGRALEC_1:
+                barva = "blue"
+            else:
+                barva = "green"
+        self.plosca.create_oval(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill=barva, outline="black")
+
+
+    def narisi_veljavno(self, a = None, b = None):
+        # polje nariše spet veljavno, brez argumentov ga nariše kjer je igralec na potezi
+        if a == None and b == None:
+            (a,b) = self.igra.pozicija_na_potezi()
         self.plosca.create_rectangle(a * self.velikost_celice, b * self.velikost_celice ,(a + 1) * self.velikost_celice, (b + 1) * self.velikost_celice, fill="white", outline="black")
-        self.plosca.create_oval(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="blue", outline="black")
 
     def narisi_kvadratke(self):
         for (i, j) in product(range(7), range(7)):
@@ -209,7 +245,7 @@ if __name__ == "__main__":
     # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
     # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
     # iz pomnilnika.
-    aplikacija = Gui(root, 700)
+    aplikacija = Gui(root, 450)
     # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
     # delovati, ko okno zapremo.
     root.mainloop()
