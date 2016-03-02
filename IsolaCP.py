@@ -64,7 +64,7 @@ class Igra():
                 c = a - 1 + i
                 d = b - 1 + j
                 if c >= 0 and c <= 6 and d >= 0 and d <= 6 and self.je_veljavna(c, d):
-                    poteze.append((i, j))
+                    poteze.append((c, d))
         return poteze
 
     def veljavne_poteze_unici(self):
@@ -85,6 +85,9 @@ class Igra():
     def premik(self, i, j):
         #premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca
         if (i, j) in self.veljavne_poteze_premik():
+            print(self.na_potezi)
+            print(self.pozicija_na_potezi())
+            print(self.polje)
             self.shrani_pozicijo()
             self.polje[i][j] = self.na_potezi
             (c, d) = self.pozicija_na_potezi()
@@ -176,12 +179,20 @@ class Gui():
                 self.igra.naredi_pravo_potezo(i, j)
             else:
                 print("napacna poteza")
+                if self.igra.na_potezi == IGRALEC_1:
+                    self.igralec_1.igraj()
+                else:
+                    self.igralec_2.igraj()
         else:
             if (i, j) in self.igra.veljavne_poteze_unici():
                 self.narisi_uniceno(i, j)
                 self.igra.naredi_pravo_potezo(i, j)
             else:
                 print("napacna poteza")
+                if self.igra.na_potezi == IGRALEC_1:
+                    self.igralec_1.igraj()
+                else:
+                    self.igralec_2.igraj()
 
         if self.igra.je_konec():
                 self.koncaj_igro()
