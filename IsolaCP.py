@@ -8,6 +8,8 @@ IGRALEC_2 = 2
 UNICENO = 0
 ZACETNI_IGRALEC = IGRALEC_1
 NEODLOCENO = None
+PREMIK = True
+UNICENJE = False
 
 
 def nasprotnik(igralec):
@@ -27,6 +29,7 @@ class Igra():
         self.zgodovina = []
         self.pozicija_1 = (0, 3)
         self.pozicija_2 = (6, 3)
+        self.del_poteze =
 
     def shrani_pozicijo(self):
         p = [self.polje[i][:] for i in range(7)]
@@ -70,6 +73,12 @@ class Igra():
                     poteze.append((i, j))
         return poteze
 
+    def povleci_potezo(self, i, j):
+        if self.del_poteze == PREMIK:
+            self.premik(i, j)
+        else:
+            self.unici(i, j)
+
     def premik(self, i, j):
         #premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca
         if (i, j) in self.veljavne_poteze_premik():
@@ -81,19 +90,42 @@ class Igra():
                 self.pozicija_1 = (i, j)
             else:
                 self.pozicija_2 = (i, j)
+            self.del_poteze = UNICENJE
 
     def unici(self, i, j):
         #uniči veljavno polje
         if (i, j) in self.veljavne_poteze_unici():
             self.shrani_pozicijo()
             self.polje[i][j] = UNICENO
+            self.del_poteze = PREMIK
 
     def zmagovalec(self):
         pass
 
+    def porazenec(self):
+        if len(self.veljavne_poteze_premik()) == 0:
+            return self.na_potezi
+
+
+#################################################### človek
+
+
+class Clovek():
+    def __init__(self, gui):
+        self.gui = gui
+
+    def igraj(self):
+        self.gui.plosca.bind('<Button-1>', self.klik)
+
+    def klik(self, event):
+        #
+        i = int(event.x / self.gui.cellsize)
+        j = int(event.y / self.gui.cellsize)
+        self.gui.povleci_potezo(i, j)
 
 
 
+#######################################################
 
 
 
