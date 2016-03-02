@@ -120,8 +120,8 @@ class Clovek():
 
     def klik(self, event):
         #
-        i = int(event.x / self.gui.cellsize)
-        j = int(event.y / self.gui.cellsize)
+        i = int(event.x / self.gui.velikost_celice)
+        j = int(event.y / self.gui.velikost_celice)
         self.gui.povleci_potezo(i, j)
 
 
@@ -160,6 +160,25 @@ class Gui():
         """Nastavi stanje igre na konec igre."""
         print ("KONEC!")
 
+    def povleci_potezo(self, i, j):
+        if self.igra.je_veljavna(i, j):
+            if self.igra.del_poteze:
+                self.narisi_premik(i, j)
+            else:
+                self.narisi_uniceno(i, j)
+            self.igra.povleci_potezo(i, j)
+            if self.igra.je_konec():
+                self.koncaj_igro()
+            else:
+                if self.igra.del_poteze == UNICENJE:
+                    if self.igra.na_potezi == IGRALEC_1:
+                        self.igralec_1.igraj()
+                    else:
+                        self.igralec_2.igraj()
+
+
+
+
     def narisi_uniceno(self, i, j):
         self.plosca.create_rectangle(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="red", outline="black")
 
@@ -169,11 +188,6 @@ class Gui():
         (a,b) = self.igra.pozicija_na_potezi()
         self.plosca.create_rectangle(a * self.velikost_celice, b * self.velikost_celice ,(a + 1) * self.velikost_celice, (b + 1) * self.velikost_celice, fill="white", outline="black")
         self.plosca.create_oval(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="blue", outline="black")
-
-
-
-
-
 
     def narisi_kvadratke(self):
         for (i, j) in product(range(7), range(7)):
