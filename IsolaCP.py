@@ -29,7 +29,7 @@ class Igra():
         self.zgodovina = []
         self.pozicija_1 = (0, 3)
         self.pozicija_2 = (6, 3)
-        self.del_poteze =
+        self.del_poteze = PREMIK
 
     def shrani_pozicijo(self):
         p = [self.polje[i][:] for i in range(7)]
@@ -125,11 +125,54 @@ class Clovek():
 
 
 
-#######################################################
+####################################################### gui
+
+class Gui():
+
+    def __init__(self, master, velikost):
+        self.napis = tkinter.StringVar(master, value="Isola!")
+        tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
+
+        self.velikost_plosce = velikost
+        self.velikost_celice = self.velikost_plosce/7
+
+        self.plosca = tkinter.Canvas(master, width=self.velikost_plosce, height=self.velikost_plosce)
+        self.plosca.grid(row=1, column=0)
+
+        self.kvadratki = self.narisi_kvadratke()
+
+        self.izbira_igralcev()
+        self.velikost_celice = self.velikost_plosce/7
+
+
+    def izbira_igralce(self):
+        self.igralec_1 = Clovek(self)
+        self.igralec_2 = Clovek(self)
+        self.zacni_igro()
+
+    def zacni_igro(self):
+        """Nastavi stanje igre na zacetek igre."""
+        self.igra = Igra()
+        self.igralec_1.igraj()              #sprement v random
+
+    def koncaj_igro(self):
+        """Nastavi stanje igre na konec igre."""
+        print ("KONEC!")
+
+    def narisi_uniceno(self, i, j):
+        self.plosca.create_rectangle(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="red", outline="black")
+
+    def narisi_premik(self, i, j):
+        #premakne igralca, ki je na potezi na izbrano polje
+        #obe figuri sta modri !!
+        (a,b) = self.igra.pozicija_na_potezi()
+        self.plosca.create_rectangle(a * self.velikost_celice, b * self.velikost_celice ,(a + 1) * self.velikost_celice, (b + 1) * self.velikost_celice, fill="white", outline="black")
+        self.plosca.create_oval(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="blue", outline="black")
 
 
 
 
-
+    def narisi_kvadratke(self):
+        pass
 
 
