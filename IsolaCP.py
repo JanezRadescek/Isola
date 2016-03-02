@@ -1,5 +1,6 @@
 import tkinter
 import random
+from itertools import product
 
 #isue  shranjevanje poteze za premik in uničevanje posebej ne vem če vredu ??
 VELJAVNO = None
@@ -8,6 +9,8 @@ IGRALEC_2 = 2
 UNICENO = 0
 ZACETNI_IGRALEC = IGRALEC_1
 NEODLOCENO = None
+PREMIK = True
+UNICENJE = False
 
 
 def nasprotnik(igralec):
@@ -27,6 +30,7 @@ class Igra():
         self.zgodovina = []
         self.pozicija_1 = (0, 3)
         self.pozicija_2 = (6, 3)
+        self.del_poteze = PREMIK
 
     def shrani_pozicijo(self):
         p = [self.polje[i][:] for i in range(7)]
@@ -70,6 +74,12 @@ class Igra():
                     poteze.append((i, j))
         return poteze
 
+    def povleci_potezo(self, i, j):
+        if self.del_poteze == PREMIK:
+            self.premik(i, j)
+        else:
+            self.unici(i, j)
+
     def premik(self, i, j):
         #premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca
         if (i, j) in self.veljavne_poteze_premik():
@@ -81,23 +91,125 @@ class Igra():
                 self.pozicija_1 = (i, j)
             else:
                 self.pozicija_2 = (i, j)
+            self.del_poteze = UNICENJE
 
     def unici(self, i, j):
         #uniči veljavno polje
         if (i, j) in self.veljavne_poteze_unici():
             self.shrani_pozicijo()
             self.polje[i][j] = UNICENO
+            self.del_poteze = PREMIK
 
     def zmagovalec(self):
         pass
 
+    def porazenec(self):
+        if len(self.veljavne_poteze_premik()) == 0:
+            return self.na_potezi
+
+
+#################################################### človek
+
+
+class Clovek():
+    def __init__(self, gui):
+        self.gui = gui
+
+    def igraj(self):
+        self.gui.plosca.bind('<Button-1>', self.klik)
+
+    def klik(self, event):
+        #
+        i = int(event.x / self.gui.velikost_celice)
+        j = int(event.y / self.gui.velikost_celice)
+        self.gui.povleci_potezo(i, j)
+
+
+
+####################################################### gui
+
+class Gui():
+
+    def __init__(self, master, velikost):
+        self.napis = tkinter.StringVar(master, value="Isola!")
+        tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
+
+        self.velikost_plosce = velikost
+        self.velikost_celice = self.velikost_plosce/7
+
+        self.plosca = tkinter.Canvas(master, width=self.velikost_plosce, height=self.velikost_plosce)
+        self.plosca.grid(row=1, column=0)
+
+        self.kvadratki = self.narisi_kvadratke()
+
+        self.izbira_igralcev()
+        self.velikost_celice = self.velikost_plosce/7
+
+
+    def izbira_igralcev(self):
+        self.igralec_1 = Clovek(self)
+        self.igralec_2 = Clovek(self)
+        self.zacni_igro()
+
+    def zacni_igro(self):
+        """Nastavi stanje igre na zacetek igre."""
+        self.igra = Igra()
+        self.igralec_1.igraj()              #sprement v random
+
+    def koncaj_igro(self):
+        """Nastavi stanje igre na konec igre."""
+        print ("KONEC!")
+
+    def povleci_potezo(self, i, j):
+        if self.igra.je_veljavna(i, j):
+            if self.igra.del_poteze:
+                self.narisi_premik(i, j)
+            else:
+                self.narisi_uniceno(i, j)
+            self.igra.povleci_potezo(i, j)
+            if self.igra.je_konec():
+                self.koncaj_igro()
+            else:
+                if self.igra.del_poteze == UNICENJE:
+                    if self.igra.na_potezi == IGRALEC_1:
+                        self.igralec_1.igraj()
+                    else:
+                        self.igralec_2.igraj()
+
+
+
+
+    def narisi_uniceno(self, i, j):
+        self.plosca.create_rectangle(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="red", outline="black")
+
+    def narisi_premik(self, i, j):
+        #premakne igralca, ki je na potezi na izbrano polje
+        #obe figuri sta modri !!
+        (a,b) = self.igra.pozicija_na_potezi()
+        self.plosca.create_rectangle(a * self.velikost_celice, b * self.velikost_celice ,(a + 1) * self.velikost_celice, (b + 1) * self.velikost_celice, fill="white", outline="black")
+        self.plosca.create_oval(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="blue", outline="black")
+
+    def narisi_kvadratke(self):
+        for (i, j) in product(range(7), range(7)):
+            coordX1 = (i * self.velikost_celice)
+            coordY1 = (j * self.velikost_celice)
+            coordX2 = coordX1 + self.velikost_celice
+            coordY2 = coordY1 + self.velikost_celice
+            color = "white" #if i%2 == j%2 else "black"
+            self.plosca.create_rectangle(coordX1, coordY1, coordX2, coordY2, fill = color, outline = "black")
 
 
 
 
 
-
-
-
-
-
+if __name__ == "__main__":
+    # Naredimo glavno okno in nastavimo ime
+    root = tkinter.Tk()
+    root.title("Isola")
+    # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
+    # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
+    # iz pomnilnika.
+    aplikacija = Gui(root, 700)
+    # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
+    # delovati, ko okno zapremo.
+    root.mainloop()
