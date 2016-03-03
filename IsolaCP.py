@@ -12,9 +12,13 @@ NEODLOCENO = None
 PREMIK = True
 UNICENJE = False
 
+NAPIS_IGRALEC1 = "Na potezi je MODRI igralec."
+NAPIS_IGRALEC2 = "Na potezi je ZELENI igralec."
+
 
 def nasprotnik(igralec):
     #določi nasprotnika
+
     if igralec == IGRALEC_1:
         return IGRALEC_2
     else:
@@ -144,7 +148,9 @@ class Gui():
     '''graficni vmesnik'''
 
     def __init__(self, master, velikost):
-        self.napis = tkinter.StringVar(master, value="Isola!")
+        self.napis = tkinter.StringVar()
+        self.napis.set(NAPIS_IGRALEC1)
+        #self.napis = tkinter.StringVar(master, value=NAPIS_IGRALEC1)
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
 
         self.velikost_plosce = velikost
@@ -222,6 +228,7 @@ class Gui():
 
     def narisi_uniceno(self, i, j):
         self.plosca.create_rectangle(i * self.velikost_polja, j * self.velikost_polja, (i + 1) * self.velikost_polja, (j + 1) * self.velikost_polja, fill="red", outline="black")
+        self.spremeni_napis()
 
     def narisi_premik(self, i, j):
         '''premakne igralca, ki je na potezi na izbrano polje'''
@@ -256,6 +263,14 @@ class Gui():
             coordY2 = coordY1 + self.velikost_polja
             color = "white" #if i%2 == j%2 else "black"
             self.plosca.create_rectangle(coordX1, coordY1, coordX2, coordY2, fill = color, outline = "black")
+
+
+    def spremeni_napis(self):
+
+        if self.igra.na_potezi == IGRALEC_2:
+            self.napis.set(NAPIS_IGRALEC1)
+        else:
+            self.napis.set(NAPIS_IGRALEC2)
 
 
 
