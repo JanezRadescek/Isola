@@ -153,8 +153,9 @@ class Gui():
         #self.napis = tkinter.StringVar(master, value=NAPIS_IGRALEC1)
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
 
-        self.velikost_plosce = velikost
-        self.velikost_polja = self.velikost_plosce / 7      #dolocimo velikost celotnega polja in posameznih celic
+        self.velikost_polja = velikost
+        self.velikost_plosce = self.velikost_polja * 7          #dolocimo velikost celotnega polja in posameznih celic
+
 
         self.plosca = tkinter.Canvas(master, width=self.velikost_plosce, height=self.velikost_plosce)       #pripravimo platno
         self.plosca.grid(row=1, column=0)
@@ -283,7 +284,7 @@ if __name__ == "__main__":
     # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
     # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
     # iz pomnilnika.
-    aplikacija = Gui(root, 450)
+    aplikacija = Gui(root, 50)
     # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
     # delovati, ko okno zapremo.
     root.mainloop()
