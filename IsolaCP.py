@@ -22,14 +22,16 @@ def nasprotnik(igralec):
 
 
 class Igra():
+    '''napisana je logika igre '''
+
     def __init__(self):
-        self.polje = list([VELJAVNO]*7 for _ in range(7))
+        self.polje = list([VELJAVNO]*7 for _ in range(7)) #mreza za shranjevanje veljavnih polj
         self.polje[0][3] = 1
         self.polje[6][3] = 2
         self.na_potezi = ZACETNI_IGRALEC
         self.zgodovina = []
         self.pozicija_1 = (0, 3)
-        self.pozicija_2 = (6, 3)
+        self.pozicija_2 = (6, 3)                #zacetna pozicija obeh igralcev
         self.del_poteze = PREMIK
 
     def shrani_pozicijo(self):
@@ -49,14 +51,16 @@ class Igra():
             return False
 
     def pozicija_na_potezi(self):
-        # vrne par koordinate igralca na potezi
+        ''' vrne par koordinate igralca na potezi'''
+
         if self.na_potezi == IGRALEC_1:
             return self.pozicija_1
         else:
             return self.pozicija_2
 
     def veljavne_poteze_premik(self):
-        # preveri vsa polja okoli igralca na potezi in vrne seznam polj na katere se lahko premakne
+        ''' preveri vsa polja okoli igralca na potezi in vrne seznam polj na katere se lahko premakne'''
+
         poteze = []
         (a, b) = self.pozicija_na_potezi()
         for i in range(3):
@@ -68,7 +72,7 @@ class Igra():
         return poteze
 
     def veljavne_poteze_unici(self):
-        #vrne seznam vseh polj, ki jih lahko uničimo
+        '''vrne seznam vseh polj, ki jih lahko uničimo'''
         poteze = []
         for i in range(7):
             for j in range(7):
@@ -83,11 +87,9 @@ class Igra():
             self.unici(i, j)
 
     def premik(self, i, j):
-        #premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca
+        '''premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca, zamenjamo del poteze'''
+
         if (i, j) in self.veljavne_poteze_premik():
-            print(self.na_potezi)
-            print(self.pozicija_na_potezi())
-            print(self.polje)
             self.shrani_pozicijo()
             self.polje[i][j] = self.na_potezi
             (c, d) = self.pozicija_na_potezi()
@@ -99,7 +101,8 @@ class Igra():
             self.del_poteze = UNICENJE
 
     def unici(self, i, j):
-        #uniči veljavno polje
+        '''uniči veljavno polje, spremeni del poteze, zamenja igralca'''
+
         if (i, j) in self.veljavne_poteze_unici():
             self.shrani_pozicijo()
             self.polje[i][j] = UNICENO
@@ -118,6 +121,8 @@ class Igra():
 
 
 class Clovek():
+    '''igralec, ki ga upravlja človek'''
+
     def __init__(self, gui):
         self.gui = gui
 
@@ -125,9 +130,10 @@ class Clovek():
         self.gui.plosca.bind('<Button-1>', self.klik)
 
     def klik(self, event):
-        #
-        i = int(event.x / self.gui.velikost_celice)
-        j = int(event.y / self.gui.velikost_celice)
+        '''shrani koordinate polja kamor kliknemo'''
+
+        i = int(event.x / self.gui.velikost_polja)
+        j = int(event.y / self.gui.velikost_polja)
         self.gui.povleci_potezo(i, j)
 
 
@@ -135,22 +141,21 @@ class Clovek():
 ####################################################### gui
 
 class Gui():
+    '''graficni vmesnik'''
 
     def __init__(self, master, velikost):
         self.napis = tkinter.StringVar(master, value="Isola!")
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
 
         self.velikost_plosce = velikost
-        self.velikost_celice = self.velikost_plosce/7
+        self.velikost_polja = self.velikost_plosce / 7      #dolocimo velikost celotnega polja in posameznih celic
 
-        self.plosca = tkinter.Canvas(master, width=self.velikost_plosce, height=self.velikost_plosce)
+        self.plosca = tkinter.Canvas(master, width=self.velikost_plosce, height=self.velikost_plosce)       #pripravimo platno
         self.plosca.grid(row=1, column=0)
 
         self.kvadratki = self.narisi_kvadratke()
 
         self.izbira_igralcev()
-        self.velikost_celice = self.velikost_plosce/7
-
 
 
 
@@ -160,7 +165,8 @@ class Gui():
         self.zacni_igro()
 
     def zacni_igro(self):
-        """Nastavi stanje igre na zacetek igre."""
+        '''Nastavi stanje igre na zacetek igre.'''
+
         self.igra = Igra()
         (a1, b1) = self.igra.pozicija_1
         (a2, b2) = self.igra.pozicija_2
@@ -169,26 +175,28 @@ class Gui():
         self.igralec_1.igraj()              #sprement v random
 
     def koncaj_igro(self):
-        """Nastavi stanje igre na konec igre."""
+        '''Nastavi stanje igre na konec igre.'''
         print ("KONEC!")
 
     def povleci_potezo(self, i, j):
-        if self.igra.del_poteze:
+        '''celoten potek poteze'''
+
+        if self.igra.del_poteze:    #če je del poteze nastavljen na PREMIK
             if (i, j) in self.igra.veljavne_poteze_premik():
                 self.narisi_premik(i, j)
                 self.igra.naredi_pravo_potezo(i, j)
             else:
-                print("napacna poteza")
+               # print("napacna poteza")
                 if self.igra.na_potezi == IGRALEC_1:
                     self.igralec_1.igraj()
                 else:
                     self.igralec_2.igraj()
-        else:
+        else:                                   #če je del poteze nastavljen na UNIČENJE
             if (i, j) in self.igra.veljavne_poteze_unici():
                 self.narisi_uniceno(i, j)
                 self.igra.naredi_pravo_potezo(i, j)
             else:
-                print("napacna poteza")
+               # print("napacna poteza")
                 if self.igra.na_potezi == IGRALEC_1:
                     self.igralec_1.igraj()
                 else:
@@ -213,35 +221,39 @@ class Gui():
 
 
     def narisi_uniceno(self, i, j):
-        self.plosca.create_rectangle(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill="red", outline="black")
+        self.plosca.create_rectangle(i * self.velikost_polja, j * self.velikost_polja, (i + 1) * self.velikost_polja, (j + 1) * self.velikost_polja, fill="red", outline="black")
 
     def narisi_premik(self, i, j):
-        #premakne igralca, ki je na potezi na izbrano polje
+        '''premakne igralca, ki je na potezi na izbrano polje'''
         self.narisi_veljavno()
         self.narisi_igralca(i, j)
 
     def narisi_igralca(self, i, j, barva = None):
-        # na izbrano polje nariše igralca
+        '''na izbrano polje nariše igralca'''
+
         if barva == None:
             if self.igra.na_potezi == IGRALEC_1:
                 barva = "blue"
             else:
                 barva = "green"
-        self.plosca.create_oval(i * self.velikost_celice, j * self.velikost_celice ,(i + 1) * self.velikost_celice, (j + 1) * self.velikost_celice, fill=barva, outline="black")
+        self.plosca.create_oval(i * self.velikost_polja, j * self.velikost_polja, (i + 1) * self.velikost_polja, (j + 1) * self.velikost_polja, fill=barva, outline="black")
 
 
     def narisi_veljavno(self, a = None, b = None):
-        # polje nariše spet veljavno, brez argumentov ga nariše kjer je igralec na potezi
+        '''polje nariše spet veljavno, brez argumentov ga nariše kjer je igralec na potezi'''
+
         if a == None and b == None:
             (a,b) = self.igra.pozicija_na_potezi()
-        self.plosca.create_rectangle(a * self.velikost_celice, b * self.velikost_celice ,(a + 1) * self.velikost_celice, (b + 1) * self.velikost_celice, fill="white", outline="black")
+        self.plosca.create_rectangle(a * self.velikost_polja, b * self.velikost_polja, (a + 1) * self.velikost_polja, (b + 1) * self.velikost_polja, fill="white", outline="black")
 
     def narisi_kvadratke(self):
+        '''narise polje ob zacetku igre'''
+
         for (i, j) in product(range(7), range(7)):
-            coordX1 = (i * self.velikost_celice)
-            coordY1 = (j * self.velikost_celice)
-            coordX2 = coordX1 + self.velikost_celice
-            coordY2 = coordY1 + self.velikost_celice
+            coordX1 = (i * self.velikost_polja)
+            coordY1 = (j * self.velikost_polja)
+            coordX2 = coordX1 + self.velikost_polja
+            coordY2 = coordY1 + self.velikost_polja
             color = "white" #if i%2 == j%2 else "black"
             self.plosca.create_rectangle(coordX1, coordY1, coordX2, coordY2, fill = color, outline = "black")
 
