@@ -12,8 +12,10 @@ NEODLOCENO = None
 PREMIK = True
 UNICENJE = False
 
-NAPIS_IGRALEC1 = "Na potezi je MODRI igralec."
-NAPIS_IGRALEC2 = "Na potezi je ZELENI igralec."
+NAPIS_IGRALEC1_PREMIK = "Na potezi je MODRI igralec. Cas je da se premaknes."
+NAPIS_IGRALEC2_PREMIK = "Na potezi je ZELENI igralec. Cas je da se premaknes."
+NAPIS_IGRALEC1_UNICENJE = "Na potezi je MODRI igralec. Cas je da unicis polje."
+NAPIS_IGRALEC2_UNICENJE = "Na potezi je ZELENI igralec. Cas je da unicis polje."
 
 
 def nasprotnik(igralec):
@@ -149,12 +151,13 @@ class Gui():
 
     def __init__(self, master, velikost):
         self.napis = tkinter.StringVar()
-        self.napis.set(NAPIS_IGRALEC1)
+        self.napis.set(NAPIS_IGRALEC1_PREMIK)
         #self.napis = tkinter.StringVar(master, value=NAPIS_IGRALEC1)
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
 
-        self.velikost_plosce = velikost
-        self.velikost_polja = self.velikost_plosce / 7      #dolocimo velikost celotnega polja in posameznih celic
+        self.velikost_polja = velikost
+        self.velikost_plosce = self.velikost_polja * 7          #dolocimo velikost celotnega polja in posameznih celic
+
 
         self.plosca = tkinter.Canvas(master, width=self.velikost_plosce, height=self.velikost_plosce)       #pripravimo platno
         self.plosca.grid(row=1, column=0)
@@ -191,6 +194,8 @@ class Gui():
             if (i, j) in self.igra.veljavne_poteze_premik():
                 self.narisi_premik(i, j)
                 self.igra.naredi_pravo_potezo(i, j)
+                self.spremeni_napis()
+
             else:
                # print("napacna poteza")
                 if self.igra.na_potezi == IGRALEC_1:
@@ -201,6 +206,8 @@ class Gui():
             if (i, j) in self.igra.veljavne_poteze_unici():
                 self.narisi_uniceno(i, j)
                 self.igra.naredi_pravo_potezo(i, j)
+                self.spremeni_napis()
+
             else:
                # print("napacna poteza")
                 if self.igra.na_potezi == IGRALEC_1:
@@ -228,7 +235,7 @@ class Gui():
 
     def narisi_uniceno(self, i, j):
         self.plosca.create_rectangle(i * self.velikost_polja, j * self.velikost_polja, (i + 1) * self.velikost_polja, (j + 1) * self.velikost_polja, fill="red", outline="black")
-        self.spremeni_napis()
+
 
     def narisi_premik(self, i, j):
         '''premakne igralca, ki je na potezi na izbrano polje'''
@@ -267,10 +274,16 @@ class Gui():
 
     def spremeni_napis(self):
 
-        if self.igra.na_potezi == IGRALEC_2:
-            self.napis.set(NAPIS_IGRALEC1)
+        if self.igra.na_potezi == IGRALEC_1:
+            if self.igra.del_poteze:
+                self.napis.set(NAPIS_IGRALEC1_PREMIK)
+            else:
+                self.napis.set(NAPIS_IGRALEC1_UNICENJE)
         else:
-            self.napis.set(NAPIS_IGRALEC2)
+            if self.igra.del_poteze:
+                self.napis.set(NAPIS_IGRALEC2_PREMIK)
+            else:
+                self.napis.set(NAPIS_IGRALEC2_UNICENJE)
 
 
 
@@ -283,7 +296,7 @@ if __name__ == "__main__":
     # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
     # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
     # iz pomnilnika.
-    aplikacija = Gui(root, 450)
+    aplikacija = Gui(root, 50)
     # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
     # delovati, ko okno zapremo.
     root.mainloop()
