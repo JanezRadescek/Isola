@@ -296,26 +296,27 @@ class Meni():
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0, columnspan = 4)
 
         #gumb play
-        master.slika_play = slika_play = tkinter.PhotoImage(file="play.png")
+        master.slika_play = slika_play = tkinter.PhotoImage(file="files\play.png")
         self.gumb_play = tkinter.Button(master, command = self.play, image = slika_play)
         self.gumb_play.grid(row=2, column=0)
 
         #gumb options
-        master.slika_options = slika_options = tkinter.PhotoImage(file="options.png")
+        master.slika_options = slika_options = tkinter.PhotoImage(file="files\options.png")
         self.gumb_options = tkinter.Button(master, command = self.options, image = slika_options)
         self.gumb_options.grid(row=2, column=1)
 
         #gumb help
-        master.slika_help = slika_help = tkinter.PhotoImage(file="help.png")
+        master.slika_help = slika_help = tkinter.PhotoImage(file="files\help.png")
         self.gumb_help = tkinter.Button(master, command = self.help, image = slika_help)
         self.gumb_help.grid(row=2, column=2)
 
         #gumb close
-        master.slika_close = slika_close = tkinter.PhotoImage(file="close.png")
+        master.slika_close = slika_close = tkinter.PhotoImage(file="files\close.png")
         self.gumb_close = tkinter.Button(master, command = self.close, image = slika_close)
         self.gumb_close.grid(row=2, column=3)
 
-
+        #naredi igralno ploščo
+        self.play()
 
 
     def play(self, event = None):
@@ -337,7 +338,6 @@ class Meni():
         pass
 
 
-
 if __name__ == "__main__":
     # Naredimo glavno okno in nastavimo ime
     root = tkinter.Tk()
@@ -345,13 +345,7 @@ if __name__ == "__main__":
     # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
     # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
     # iz pomnilnika.
-
-    #root1 = tkinter.Tk()
-    #root1.title("Meni")
     aplication1 = Meni(root)
-    #root1.mainloop()
-
     # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
     # delovati, ko okno zapremo.
-
     root.mainloop()
