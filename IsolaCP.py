@@ -288,6 +288,24 @@ class Gui():
 
 
 
+class Meni():
+    '''meni'''
+
+    def __init__(self, master):
+        self.napis = tkinter.StringVar(master, value="Isola!")
+        tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
+
+
+        master.photo = photo = tkinter.PhotoImage(file="a.png")
+        self.gumb_play = tkinter.Button(master, command = self.zazeni, image = photo)
+        self.gumb_play.grid(row=1, column=0)
+        self.gumb_play.bind("<Button-1>", self.zazeni)
+
+
+    def zazeni(self, event = None):
+        aplication2 = Gui(root, 50)
+
+
 
 if __name__ == "__main__":
     # Naredimo glavno okno in nastavimo ime
@@ -296,7 +314,7 @@ if __name__ == "__main__":
     # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
     # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
     # iz pomnilnika.
-    aplikacija = Gui(root, 50)
+    aplication1 = Meni(root)
     # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
     # delovati, ko okno zapremo.
     root.mainloop()
