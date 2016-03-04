@@ -272,18 +272,21 @@ class Gui():
             self.plosca.create_rectangle(coordX1, coordY1, coordX2, coordY2, fill = color, outline = "black")
 
 
-    def spremeni_napis(self):
+    def spremeni_napis(self, napis = None):
+        if napis == None:
 
-        if self.igra.na_potezi == IGRALEC_1:
-            if self.igra.del_poteze:
-                self.napis.set(NAPIS_IGRALEC1_PREMIK)
+            if self.igra.na_potezi == IGRALEC_1:
+                if self.igra.del_poteze:
+                    self.napis.set(NAPIS_IGRALEC1_PREMIK)
+                else:
+                    self.napis.set(NAPIS_IGRALEC1_UNICENJE)
             else:
-                self.napis.set(NAPIS_IGRALEC1_UNICENJE)
+                if self.igra.del_poteze:
+                    self.napis.set(NAPIS_IGRALEC2_PREMIK)
+                else:
+                    self.napis.set(NAPIS_IGRALEC2_UNICENJE)
         else:
-            if self.igra.del_poteze:
-                self.napis.set(NAPIS_IGRALEC2_PREMIK)
-            else:
-                self.napis.set(NAPIS_IGRALEC2_UNICENJE)
+            self.napis.set(napis)
 
 
 
@@ -292,6 +295,8 @@ class Meni():
     '''meni'''
 
     def __init__(self, master):
+        self.master = master
+
         self.napis = tkinter.StringVar(master, value="Isola!")
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0, columnspan = 4)
 
@@ -320,22 +325,27 @@ class Meni():
 
 
     def play(self, event = None):
-        #root2 = tkinter.Tk()
-        #root2.title("Isola")
-        aplication2 = Gui(root, 50)
-        #root2.mainloop()
+        self.aplication2 = Gui(root, 50)
 
     def options(self):
         print("options")
         pass
 
     def help(self):
+
+        napis_help = "Vse ob svojem času"
+
+        self.aplication2.spremeni_napis(napis_help)
+
+        self.velikost_plosce = 7 * 50
+        self.plosca = tkinter.Canvas(self.master, width=self.velikost_plosce, height=self.velikost_plosce)
+        self.plosca.grid(row=1, column=0, columnspan = 4)
+
         print("help")
         pass
 
     def close(self):
-        print("close")
-        pass
+        root.destroy()
 
 
 if __name__ == "__main__":
