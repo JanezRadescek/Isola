@@ -1,6 +1,9 @@
 import tkinter
 import random
 from itertools import product
+import winsound
+
+
 
 
 VELJAVNO = None
@@ -153,14 +156,14 @@ class Gui():
         self.napis = tkinter.StringVar()
         self.napis.set(NAPIS_IGRALEC1_PREMIK)
         #self.napis = tkinter.StringVar(master, value=NAPIS_IGRALEC1)
-        tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
+        tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0, columnspan = 4)
 
         self.velikost_polja = velikost
         self.velikost_plosce = self.velikost_polja * 7          #dolocimo velikost celotnega polja in posameznih celic
 
 
         self.plosca = tkinter.Canvas(master, width=self.velikost_plosce, height=self.velikost_plosce)       #pripravimo platno
-        self.plosca.grid(row=1, column=0)
+        self.plosca.grid(row=1, column=0, columnspan = 4)
 
         self.kvadratki = self.narisi_kvadratke()
 
@@ -272,18 +275,21 @@ class Gui():
             self.plosca.create_rectangle(coordX1, coordY1, coordX2, coordY2, fill = color, outline = "black")
 
 
-    def spremeni_napis(self):
+    def spremeni_napis(self, napis = None):
+        if napis == None:
 
-        if self.igra.na_potezi == IGRALEC_1:
-            if self.igra.del_poteze:
-                self.napis.set(NAPIS_IGRALEC1_PREMIK)
+            if self.igra.na_potezi == IGRALEC_1:
+                if self.igra.del_poteze:
+                    self.napis.set(NAPIS_IGRALEC1_PREMIK)
+                else:
+                    self.napis.set(NAPIS_IGRALEC1_UNICENJE)
             else:
-                self.napis.set(NAPIS_IGRALEC1_UNICENJE)
+                if self.igra.del_poteze:
+                    self.napis.set(NAPIS_IGRALEC2_PREMIK)
+                else:
+                    self.napis.set(NAPIS_IGRALEC2_UNICENJE)
         else:
-            if self.igra.del_poteze:
-                self.napis.set(NAPIS_IGRALEC2_PREMIK)
-            else:
-                self.napis.set(NAPIS_IGRALEC2_UNICENJE)
+            self.napis.set(napis)
 
 
 
@@ -292,19 +298,59 @@ class Meni():
     '''meni'''
 
     def __init__(self, master):
+        self.master = master
+
+        winsound.PlaySound("files\\two.wav", winsound.SND_ASYNC|winsound.SND_LOOP)
+
         self.napis = tkinter.StringVar(master, value="Isola!")
-        tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0)
+        tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0, columnspan = 4)
+
+        #gumb play
+        master.slika_play = slika_play = tkinter.PhotoImage(file="files\play.png")
+        self.gumb_play = tkinter.Button(master, command = self.play, image = slika_play)
+        self.gumb_play.grid(row=2, column=0)
+
+        #gumb options
+        master.slika_options = slika_options = tkinter.PhotoImage(file="files\options.png")
+        self.gumb_options = tkinter.Button(master, command = self.options, image = slika_options)
+        self.gumb_options.grid(row=2, column=1)
+
+        #gumb help
+        master.slika_help = slika_help = tkinter.PhotoImage(file="files\help.png")
+        self.gumb_help = tkinter.Button(master, command = self.help, image = slika_help)
+        self.gumb_help.grid(row=2, column=2)
+
+        #gumb close
+        master.slika_close = slika_close = tkinter.PhotoImage(file="files\close.png")
+        self.gumb_close = tkinter.Button(master, command = self.close, image = slika_close)
+        self.gumb_close.grid(row=2, column=3)
+
+        #naredi igralno ploščo
+        self.play()
 
 
-        master.photo = photo = tkinter.PhotoImage(file="a.png")
-        self.gumb_play = tkinter.Button(master, command = self.zazeni, image = photo)
-        self.gumb_play.grid(row=1, column=0)
-        self.gumb_play.bind("<Button-1>", self.zazeni)
+    def play(self, event = None):
+        self.aplication2 = Gui(root, 70)
 
+    def options(self):
+        print("options")
+        pass
 
-    def zazeni(self, event = None):
-        aplication2 = Gui(root, 50)
+    def help(self):
 
+        napis_help = "Vse ob svojem času"
+
+        self.aplication2.spremeni_napis(napis_help)
+
+        self.velikost_plosce = 7 * 50
+        self.plosca = tkinter.Canvas(self.master, width=self.velikost_plosce, height=self.velikost_plosce)
+        self.plosca.grid(row=1, column=0, columnspan = 4)
+
+        print("help")
+        pass
+
+    def close(self):
+        root.destroy()
 
 
 if __name__ == "__main__":
