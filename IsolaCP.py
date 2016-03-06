@@ -330,7 +330,7 @@ class Meni():
 
 
     def play(self, event = None):
-        self.aplication2 = Gui(root, 50)
+        self.aplication2 = Gui(root, 70)
 
     def options(self):
         print("options")
