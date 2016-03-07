@@ -145,7 +145,24 @@ class Clovek():
         j = int(event.y / self.gui.velikost_polja)
         self.gui.povleci_potezo(i, j)
 
+######################################################### racunalnik
 
+class Racunalnik():
+    '''Igralec, ki ga upravlja racunalnik'''
+
+    def __init__(self, gui):
+        self.gui = gui
+
+    def igraj(self):
+        if self.gui.igra.del_poteze == PREMIK:
+            (i, j) = self.gui.igra.veljavne_poteze_premik()[0]
+            self.gui.povleci_potezo(i, j)
+        elif self.gui.igra.del_poteze == UNICENJE:
+            (i, j) = self.gui.igra.veljavne_poteze_unici()[0]
+            self.gui.povleci_potezo(i, j)
+
+    def klik(self):
+        pass
 
 ####################################################### gui
 
@@ -173,7 +190,7 @@ class Gui():
 
     def izbira_igralcev(self):
         self.igralec_1 = Clovek(self)
-        self.igralec_2 = Clovek(self)
+        self.igralec_2 = Racunalnik(self)
         self.zacni_igro()
 
     def zacni_igro(self):
@@ -192,7 +209,8 @@ class Gui():
 
     def povleci_potezo(self, i, j):
         '''celoten potek poteze'''
-
+        print(self.igra.na_potezi)
+        print(self.igra.del_poteze)
         if self.igra.del_poteze:    #če je del poteze nastavljen na PREMIK
             if (i, j) in self.igra.veljavne_poteze_premik():
                 self.narisi_premik(i, j)
@@ -221,17 +239,10 @@ class Gui():
         if self.igra.je_konec():
                 self.koncaj_igro()
         else:
-            if self.igra.del_poteze == UNICENJE:
                 if self.igra.na_potezi == IGRALEC_1:
                     self.igralec_1.igraj()
                 else:
                     self.igralec_2.igraj()
-            else:
-                if self.igra.na_potezi == IGRALEC_1:
-                    self.igralec_2.igraj()
-                else:
-                    self.igralec_1.igraj()
-
 
 
 
