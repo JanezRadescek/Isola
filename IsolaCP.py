@@ -2,6 +2,9 @@ import tkinter
 import random
 from itertools import product
 import winsound
+import logging
+import argparse
+import threading
 
 
 
@@ -47,6 +50,18 @@ class Igra():
         p = [self.polje[i][:] for i in range(7)]
         self.zgodovina.append((p, self.na_potezi))
 
+    def kopija(self):
+        """Vrni kopijo te igre, brez zgodovine."""
+        # Kopijo igre naredimo, ko poženemo na njej algoritem.
+        # Če bi algoritem poganjali kar na glavni igri, ki jo
+        # uporablja GUI, potem bi GUI mislil, da se menja stanje
+        # igre (kdo je na potezi, kdo je zmagal) medtem, ko bi
+        # algoritem vlekel poteze
+        k = Igra()
+        k.plosca = [self.plosca[i][:] for i in range(3)]
+        k.na_potezi = self.na_potezi
+        return k
+
     def razveljavi(self):
         (self.polje, self.na_potezi) = self.zgodovina.pop()
 
@@ -88,6 +103,7 @@ class Igra():
                 if self.je_veljavna(i, j):
                     poteze.append((i, j))
         return poteze
+
 
     def naredi_pravo_potezo(self, i, j):
         if self.del_poteze == PREMIK:
@@ -150,26 +166,134 @@ class Clovek():
 class Racunalnik():
     '''Igralec, ki ga upravlja racunalnik'''
 
-    def __init__(self, gui):
+    def __init__(self, gui, algoritem):
         self.gui = gui
+        self.algoritem = algoritem
+        self.mislec = None
 
     def igraj(self):
-        if self.gui.igra.del_poteze == PREMIK:
-            (i, j) = self.gui.igra.veljavne_poteze_premik()[0]
-            self.gui.povleci_potezo(i, j)
-        elif self.gui.igra.del_poteze == UNICENJE:
-            (i, j) = self.gui.igra.veljavne_poteze_unici()[0]
-            self.gui.povleci_potezo(i, j)
+#        if self.gui.igra.del_poteze == PREMIK:
+#            (i, j) = self.gui.igra.veljavne_poteze_premik()[0]
+ #           self.gui.povleci_potezo(i, j)
+#        elif self.gui.igra.del_poteze == UNICENJE:
+  #          (i, j) = self.gui.igra.veljavne_poteze_unici()[0]
+#            self.gui.povleci_potezo(i, j)
+        self.mislec = threading.Thread(
+            target=lambda: self.algoritem.izracunaj_potezo(self.gui.igra.kopija()))
+
+        self.mislec.start()
+
+        self.gui.plosca.after(100, self.preveri_potezo)
+
+    def preveri_potezo(self):
+        """Vsakih 100ms preveri, ali je algoritem že izračunal potezo."""
+        if self.algoritem.poteza is not None:
+            # Algoritem je našel potezo, povleci jo, če ni bilo prekinitve
+            self.gui.povleci_potezo(self.algoritem.poteza)
+            # Vzporedno vlakno ni več aktivno, zato ga "pozabimo"
+            self.mislec = None
+        else:
+            # Algoritem še ni našel poteze, preveri še enkrat čez 100ms
+            self.gui.plosca.after(100, self.preveri_potezo)
+
+    def prekini(self):
+        # To metodo kliče GUI, če je treba prekiniti razmišljanje.
+        if self.mislec:
+            logging.debug ("Prekinjamo {0}".format(self.mislec))
+            # Algoritmu sporočimo, da mora nehati z razmišljanjem
+            self.algoritem.prekini()
+            # Počakamo, da se vlakno ustavi
+            self.mislec.join()
+            self.mislec = None
 
     def klik(self):
         pass
+######################################################################
+## Algoritem minimax
+
+class Minimax:
+    # Algoritem minimax predstavimo z objektom, ki hrani stanje igre in
+    # algoritma, nima pa dostopa do GUI (ker ga ne sme uporabljati, saj deluje
+    # v drugem vlaknu kot tkinter).
+    def __init__(self, globina):
+        self.globina = globina  # do katere globine iščemo?
+        self.prekinitev = False # ali moramo končati?
+        self.igra = None # objekt, ki opisuje igro (ga dobimo kasneje)
+        self.jaz = None  # katerega igralca igramo (podatek dobimo kasneje)
+        self.poteza = None # sem napišemo potezo, ko jo najdemo
+
+    def prekini(self):
+        """Metoda, ki jo pokliče GUI, če je treba nehati razmišljati, ker
+           je uporabnik zaprl okno ali izbral novo igro."""
+        self.prekinitev = True
+
+
+    def izracunaj_potezo(self, igra):
+        """Izračunaj potezo za trenutno stanje dane igre."""
+        # To metodo pokličemo iz vzporednega vlakna
+        self.igra = igra
+        self.prekinitev = False # Glavno vlakno bo to nastvilo na True, če moramo nehati
+        self.jaz = self.igra.na_potezi
+        self.poteza = None # Sem napišemo potezo, ko jo najdemo
+        # Poženemo minimax
+        (poteza, vrednost) = self.minimax(self.globina, True)
+        self.jaz = None
+        self.igra = None
+        if not self.prekinitev:
+            # Potezo izvedemo v primeru, da nismo bili prekinjeni
+            logging.debug("minimax: poteza {0}, vrednost {1}".format(poteza, vrednost))
+            self.poteza = poteza
+
+    ZMAGA = 100000 # Mora biti vsaj 10^5
+    NESKONCNO = ZMAGA + 1 # Več kot zmaga
+
+    def vrednost_pozicije(self):
+        vrednost = 5000
+        return vrednost
+
+    def minimax(self, globina, maksimiziramo):
+        if self.prekinitev:
+            # Sporočili so nam, da moramo prekiniti
+            logging.debug ("Minimax prekinja, globina = {0}".format(globina))
+            return (None, 0)
+        if globina == 0:
+                return (None, self.vrednost_pozicije())
+        else:
+            # Naredimo eno stopnjo minimax
+            if maksimiziramo:
+                # Maksimiziramo
+                najboljsa_poteza = None
+                vrednost_najboljse = -Minimax.NESKONCNO
+                for p in self.igra.veljavne_poteze():
+                    self.igra.povleci_potezo(p)
+                    vrednost = self.minimax(globina-1, not maksimiziramo)[1]
+                    self.igra.razveljavi()
+                    if vrednost > vrednost_najboljse:
+                        vrednost_najboljse = vrednost
+                        najboljsa_poteza = p
+            else:
+                # Minimiziramo
+                najboljsa_poteza = None
+                vrednost_najboljse = Minimax.NESKONCNO
+                for p in self.igra.veljavne_poteze():
+                    self.igra.povleci_potezo(p)
+                    vrednost = self.minimax(globina-1, not maksimiziramo)[1]
+                    self.igra.razveljavi()
+                    if vrednost < vrednost_najboljse:
+                        vrednost_najboljse = vrednost
+                        najboljsa_poteza = p
+            return (najboljsa_poteza, vrednost_najboljse)
+
 
 ####################################################### gui
+
+
+
 
 class Gui():
     '''graficni vmesnik'''
 
-    def __init__(self, master, velikost):
+    def __init__(self, master, velikost, globina):
         self.napis = tkinter.StringVar()
         self.napis.set(NAPIS_IGRALEC1_PREMIK)
         #self.napis = tkinter.StringVar(master, value=NAPIS_IGRALEC1)
@@ -185,12 +309,12 @@ class Gui():
         self.kvadratki = self.narisi_kvadratke()
 
         self.izbira_igralcev()
-
+        self.globina = globina
 
 
     def izbira_igralcev(self):
         self.igralec_1 = Clovek(self)
-        self.igralec_2 = Racunalnik(self)
+        self.igralec_2 = Racunalnik(self, 3)
         self.zacni_igro()
 
     def zacni_igro(self):
@@ -341,7 +465,7 @@ class Meni():
 
 
     def play(self, event = None):
-        self.aplication2 = Gui(root, 70)
+        self.aplication2 = Gui(root, 70, 3)
 
     def options(self):
         print("options")
