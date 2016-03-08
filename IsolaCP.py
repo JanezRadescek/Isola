@@ -8,7 +8,7 @@ import threading
 
 
 
-
+GLOBINA = 3
 VELJAVNO = None
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -172,7 +172,7 @@ class Clovek():
 class Racunalnik():
     '''Igralec, ki ga upravlja racunalnik'''
 
-    def __init__(self, gui, algoritem):
+    def __init__(self, gui, algoritem = Minimax(GLOBINA)):
         self.gui = gui
         self.algoritem = algoritem
         self.mislec = None
@@ -212,11 +212,11 @@ class Racunalnik():
 
 #################################################       Algoritem minimax       ###################
 
-class Minimax:
+class Minimax():
     # Algoritem minimax predstavimo z objektom, ki hrani stanje igre in
     # algoritma, nima pa dostopa do GUI (ker ga ne sme uporabljati, saj deluje
     # v drugem vlaknu kot tkinter).
-    def __init__(self, globina):
+    def __init__(self, globina = GLOBINA):
         self.globina = globina  # do katere globine iščemo?
         self.prekinitev = False # ali moramo končati?
         self.igra = None # objekt, ki opisuje igro (ga dobimo kasneje)
