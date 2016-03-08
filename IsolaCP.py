@@ -1,6 +1,9 @@
 import tkinter
 import random
 from itertools import product
+import winsound
+
+
 
 
 VELJAVNO = None
@@ -297,6 +300,8 @@ class Meni():
     def __init__(self, master):
         self.master = master
 
+        winsound.PlaySound("files\\two.wav", winsound.SND_ASYNC|winsound.SND_LOOP)
+
         self.napis = tkinter.StringVar(master, value="Isola!")
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0, columnspan = 4)
 
@@ -325,7 +330,7 @@ class Meni():
 
 
     def play(self, event = None):
-        self.aplication2 = Gui(root, 50)
+        self.aplication2 = Gui(root, 70)
 
     def options(self):
         print("options")
