@@ -7,7 +7,7 @@ import argparse
 import threading
 
 
-
+VELIKOST_POLJA = 70
 GLOBINA = 3
 VELJAVNO = None
 IGRALEC_1 = 1
@@ -22,6 +22,14 @@ NAPIS_IGRALEC1_PREMIK = "Na potezi je MODRI igralec. Cas je da se premaknes."
 NAPIS_IGRALEC2_PREMIK = "Na potezi je ZELENI igralec. Cas je da se premaknes."
 NAPIS_IGRALEC1_UNICENJE = "Na potezi je MODRI igralec. Cas je da unicis polje."
 NAPIS_IGRALEC2_UNICENJE = "Na potezi je ZELENI igralec. Cas je da unicis polje."
+NAVODILA = """just kiding \n hahahah \n \n
+Na polju 7*7 igralca postavita svojo figurico
+na sredino nasprotnih robov. Igralca si izmenjujeta
+poteze. V vsaki potezi se igralec najprej premakne
+za eno polje(kot kralj pri šahu), nato odstrani
+eno polje. Na polja, ki so že bila odstranjena
+se ni dovoljeno premakniti. Cilj igre je odstraniti
+ploščice tako, da se nasprotnik ne more več premakniti."""
 
 
 def nasprotnik(igralec):
@@ -172,7 +180,7 @@ class Clovek():
 class Racunalnik():
     '''Igralec, ki ga upravlja racunalnik'''
 
-    def __init__(self, gui, algoritem = Minimax(GLOBINA)):
+    def __init__(self, gui, algoritem):
         self.gui = gui
         self.algoritem = algoritem
         self.mislec = None
@@ -294,7 +302,7 @@ class Minimax():
 class Gui():
     '''graficni vmesnik'''
 
-    def __init__(self, master, velikost):
+    def __init__(self, master, velikost, globina = GLOBINA):
         self.napis = tkinter.StringVar()
         self.napis.set(NAPIS_IGRALEC1_PREMIK)
         #self.napis = tkinter.StringVar(master, value=NAPIS_IGRALEC1)
@@ -310,6 +318,7 @@ class Gui():
         self.kvadratki = self.narisi_kvadratke()
 
         self.izbira_igralcev()
+        self.globina = globina
 
 
 
@@ -330,6 +339,7 @@ class Gui():
 
     def koncaj_igro(self):
         '''Nastavi stanje igre na konec igre.'''
+
         print ("KONEC!")
 
     def povleci_potezo(self, i, j):
@@ -363,16 +373,11 @@ class Gui():
         if self.igra.je_konec():
                 self.koncaj_igro()
         else:
-            if self.igra.del_poteze == UNICENJE:
-                if self.igra.na_potezi == IGRALEC_1:
-                    self.igralec_1.igraj()
-                else:
-                    self.igralec_2.igraj()
+            if self.igra.na_potezi == IGRALEC_1:
+                self.igralec_1.igraj()
             else:
-                if self.igra.na_potezi == IGRALEC_1:
-                    self.igralec_2.igraj()
-                else:
-                    self.igralec_1.igraj()
+                self.igralec_2.igraj()
+
 
 
 
@@ -439,8 +444,9 @@ class Gui():
 class Meni():
     '''meni'''
 
-    def __init__(self, master):
+    def __init__(self, master, velikost_polja):
         self.master = master
+        self.velikost_polja = velikost_polja
 
         winsound.PlaySound("files\\two.wav", winsound.SND_ASYNC|winsound.SND_LOOP)
 
@@ -472,21 +478,22 @@ class Meni():
 
 
     def play(self, event = None):
-        self.aplication2 = Gui(root, 70)
+        self.aplication2 = Gui(root, self.velikost_polja, GLOBINA)
 
     def options(self):
         print("options")
         pass
 
     def help(self):
-
-        napis_help = "Vse ob svojem času"
+        napis_help = "NAVODILA"
+        navodila = NAVODILA
 
         self.aplication2.spremeni_napis(napis_help)
 
-        self.velikost_plosce = 7 * 50
+        self.velikost_plosce = 7 * self.velikost_polja
         self.plosca = tkinter.Canvas(self.master, width=self.velikost_plosce, height=self.velikost_plosce)
         self.plosca.grid(row=1, column=0, columnspan = 4)
+        self.plosca.create_text(self.velikost_plosce/2, self.velikost_polja*5, text = navodila)
 
         print("help")
         pass
@@ -502,7 +509,7 @@ if __name__ == "__main__":
     # Naredimo objekt razreda Gui in ga spravimo v spremenljivko,
     # sicer bo Python mislil, da je objekt neuporabljen in ga bo pobrisal
     # iz pomnilnika.
-    aplication1 = Meni(root)
+    aplication1 = Meni(root, VELIKOST_POLJA)
     # Kontrolo prepustimo glavnemu oknu. Funkcija mainloop neha
     # delovati, ko okno zapremo.
     root.mainloop()
