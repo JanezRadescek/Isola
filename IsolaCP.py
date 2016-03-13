@@ -76,10 +76,11 @@ class Igra():
         k.pozicija_1 = self.pozicija_1
         k.pozicija_2 = self.pozicija_2
         k.del_poteze = self.del_poteze
-        k.zgodovina = self.zgodovina
+        # k.zgodovina = self.zgodovina
         return k
 
     def razveljavi(self):
+        print(self.na_potezi)
         (self.polje, self.na_potezi) = self.zgodovina.pop()
 
     def je_veljavna(self, i, j):
@@ -305,7 +306,7 @@ class Minimax():
                     if vrednost > vrednost_najboljse:
                         vrednost_najboljse = vrednost
                         najboljsa_poteza = p
-                return najboljsa_poteza
+                return (najboljsa_poteza, vrednost_najboljse)
             else:
                 najboljsa_poteza = None
                 vrednost_najboljse = Minimax.NESKONCNO
@@ -316,7 +317,7 @@ class Minimax():
                     if vrednost < vrednost_najboljse:
                         vrednost_najboljse = vrednost
                         najboljsa_poteza = p
-                return najboljsa_poteza
+                return (najboljsa_poteza, vrednost_najboljse)
 
 
 
@@ -337,7 +338,7 @@ class Minimax():
                     if vrednost > vrednost_najboljse:
                         vrednost_najboljse = vrednost
                         najboljsa_poteza = p
-                return najboljsa_poteza
+                return (najboljsa_poteza, vrednost_najboljse)
             else:
                 najboljsa_poteza = None
                 vrednost_najboljse = Minimax.NESKONCNO
@@ -348,7 +349,7 @@ class Minimax():
                     if vrednost < vrednost_najboljse:
                         vrednost_najboljse = vrednost
                         najboljsa_poteza = p
-                return najboljsa_poteza
+                return (najboljsa_poteza, vrednost_najboljse)
 
     # def minimax(self, globina, maksimiziramo):
     #     if self.prekinitev:
