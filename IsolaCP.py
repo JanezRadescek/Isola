@@ -8,7 +8,7 @@ import threading
 
 
 VELIKOST_POLJA = 70
-GLOBINA = 3
+GLOBINA = 1
 VELJAVNO = None
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -61,7 +61,7 @@ class Igra():
     def shrani_pozicijo(self):
         p = [self.polje[i][:] for i in range(7)]
         self.zgodovina.append((p, self.na_potezi, self.pozicija_1, self.pozicija_2))
-        #print(self.na_potezi)
+        print(self.na_potezi)
 
     def kopija(self):
         """Vrni kopijo te igre, brez zgodovine."""
@@ -80,7 +80,7 @@ class Igra():
         return k
 
     def razveljavi(self):
-        #print(self.na_potezi)
+        print(self.na_potezi)
         (self.polje, self.na_potezi, self.pozicija_1, self.pozicija_2) = self.zgodovina.pop()
 
 
@@ -287,6 +287,7 @@ class Minimax():
              # Sporočili so nam, da moramo prekiniti
              logging.debug ("Minimax prekinja, globina = {0}".format(globina))
              return (None, 0)
+        print(self.igra_kopija.del_poteze)
         if self.igra_kopija.del_poteze == PREMIK:
             return self.premik_minimax(globina, maksimiziramo)
         else:
@@ -575,7 +576,7 @@ class Meni():
 
 
     def play(self, event = None):
-        self.aplication2 = Gui(root, self.velikost_polja, 1)
+        self.aplication2 = Gui(root, self.velikost_polja, GLOBINA)
         #sam da vidm kva se zgodi pr manši globini
 
     def options(self):
