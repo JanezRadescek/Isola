@@ -60,7 +60,7 @@ class Igra():
 
     def shrani_pozicijo(self):
         p = [self.polje[i][:] for i in range(7)]
-        self.zgodovina.append((p, self.na_potezi))
+        self.zgodovina.append((p, self.na_potezi, self.pozicija_1, self.pozicija_2))
         print(self.na_potezi)
 
     def kopija(self):
@@ -81,7 +81,8 @@ class Igra():
 
     def razveljavi(self):
         print(self.na_potezi)
-        (self.polje, self.na_potezi) = self.zgodovina.pop()
+        (self.polje, self.na_potezi, self.pozicija_1, self.pozicija_2) = self.zgodovina.pop()
+
 
     def je_veljavna(self, i, j):
         return (self.polje[i][j] == VELJAVNO)
@@ -135,9 +136,10 @@ class Igra():
     def naredi_pravo_potezo(self, i, j):
         if self.del_poteze == PREMIK:
             self.premik(i, j)
+            print(self.zgodovina)
         else:
             self.unici(i, j)
-
+            print(self.zgodovina)
     def premik(self, i, j):
         '''premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca, zamenjamo del poteze'''
 
