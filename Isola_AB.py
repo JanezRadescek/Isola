@@ -283,9 +283,9 @@ class Alfabeta():
 
     def vrednost_pozicije(self, i, j):
         if self.igra_kopija.del_poteze:
-            self.vrednost_pozicije_premik()
+            return self.vrednost_pozicije_premik(i, j)
         else:
-            self.vrednost_pozicije_unici()
+            return self.vrednost_pozicije_unici(i, j)
 
     def vrednost_pozicije_premik(self, i, j):
         return 100
@@ -306,24 +306,25 @@ class Alfabeta():
             return ((i,j), self.vrednost_pozicije(i, j))
 
         else:
+            print(len(self.igra_kopija.veljavne_poteze()))
             if maksimiziramo:
                 najboljsa_poteza = None
-                vrednost_najboljse = -NESKONCNO
+                vrednost_najboljse = -self.NESKONCNO
                 for (a, b) in self.igra_kopija.veljavne_poteze():
                     self.igra_kopija.naredi_pravo_potezo(a, b)
 
                     if najboljsa_poteza == None:            #če kličemo prvič nimammo še ničesar s čimer bi primerjali
-                        (p,vrednost) = self.albe(globina-1, not maksimiziramo, NESKONCNO)
+                        (p,vrednost) = self.albe(globina-1, not maksimiziramo, self.NESKONCNO)
                     else:
                         (p,vrednost) = self.albe(globina-1, not maksimiziramo, vrednost_najboljse)
 
 
                     self.igra_kopija.razveljavi()
-
+                    print(vrednost)
                     if vrednost > na_ze_na_vrednost:        ## alba-max kliče alba-min. se pravi če lahko nasprotnik naredi boljšo
                                                             ## kot jo je alba_min že našel potem je ta "veja zanič" in vrne takoj vrne
                                                             ##  neskončno, da je alba-min ne uporabi
-                        return (None, NESKONCNO)
+                        return (None, self.NESKONCNO)
 
                     if vrednost > vrednost_najboljse:
                         vrednost_najboljse = vrednost
@@ -332,19 +333,19 @@ class Alfabeta():
 
             else:
                 najboljsa_poteza = None
-                vrednost_najboljse = NESKONCNO
+                vrednost_najboljse = self.NESKONCNO
                 for (a, b) in self.igra_kopija.veljavne_poteze():
                     self.igra_kopija.naredi_pravo_potezo(a, b)
 
                     if najboljsa_poteza == None:
-                        (p,vrednost) = self.albe(globina-1, not maksimiziramo, NESKONCNO)
+                        (p,vrednost) = self.albe(globina-1, not maksimiziramo, -self.NESKONCNO)
                     else:
                         (p,vrednost) = self.albe(globina-1, not maksimiziramo, vrednost_najboljse)
 
                     self.igra_kopija.razveljavi()
 
                     if vrednost < na_ze_na_vrednost:
-                        return (None, NESKONCNO)
+                        return (None, -self.NESKONCNO)
 
 
                     if vrednost < vrednost_najboljse:
