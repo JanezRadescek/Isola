@@ -107,6 +107,12 @@ class Igra():
         else:
             return self.pozicija_2
 
+    def veljavne_poteze(self, nasprotnik = False):
+        if self.del_poteze:
+            return self.veljavne_poteze_premik(nasprotnik)
+        else:
+            return self.veljavne_poteze_unici()
+
 
     def veljavne_poteze_premik(self, nasprotnik = False ):
         ''' preveri vsa polja okoli igralca na potezi in vrne seznam polj na katere se lahko premakne'''
@@ -140,6 +146,7 @@ class Igra():
         else:
             self.unici(i, j)
             #print(self.zgodovina)
+
     def premik(self, i, j):
         '''premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca, zamenjamo del poteze'''
 
@@ -421,8 +428,8 @@ class Gui():
 
     def izbira_igralcev(self):
         self.igralec_1 = Clovek(self)
-        #self.igralec_2 = Clovek(self)
-        self.igralec_2 = Racunalnik(self, Minimax(GLOBINA))
+        self.igralec_2 = Clovek(self)
+        #self.igralec_2 = Racunalnik(self, Minimax(GLOBINA))
         self.zacni_igro()
 
     def zacni_igro(self):
@@ -443,30 +450,18 @@ class Gui():
     def povleci_potezo(self, i, j):
         '''celoten potek poteze'''
 
-        if self.igra.del_poteze:    #če je del poteze nastavljen na PREMIK
-            if (i, j) in self.igra.veljavne_poteze_premik():
-                self.narisi_premik(i, j)
-                self.igra.naredi_pravo_potezo(i, j)
-                self.spremeni_napis()
+        if (i, j) in self.igra.veljavne_poteze():
+            self.narisi(i, j)
+            self.igra.naredi_pravo_potezo(i, j)
+            self.spremeni_napis()
 
-            else:
+        else:
                # print("napacna poteza")
-                if self.igra.na_potezi == IGRALEC_1:
-                    self.igralec_1.igraj()
-                else:
-                    self.igralec_2.igraj()
-        else:                                   #če je del poteze nastavljen na UNIČENJE
-            if (i, j) in self.igra.veljavne_poteze_unici():
-                self.narisi_uniceno(i, j)
-                self.igra.naredi_pravo_potezo(i, j)
-                self.spremeni_napis()
+            if self.igra.na_potezi == IGRALEC_1:
+                self.igralec_1.igraj()
+            else:
+                self.igralec_2.igraj()
 
-            else:
-               # print("napacna poteza")
-                if self.igra.na_potezi == IGRALEC_1:
-                    self.igralec_1.igraj()
-                else:
-                    self.igralec_2.igraj()
 
         if self.igra.je_konec():
                 self.koncaj_igro()
@@ -479,7 +474,11 @@ class Gui():
 
 
 
-
+    def narisi(self, i, j):
+        if self.igra.del_poteze:
+            self.narisi_premik(i, j)
+        else:
+            self.narisi_uniceno(i, j)
 
     def narisi_uniceno(self, i, j):
         self.plosca.create_rectangle(i * self.velikost_polja, j * self.velikost_polja, (i + 1) * self.velikost_polja, (j + 1) * self.velikost_polja, fill="red", outline="black")
