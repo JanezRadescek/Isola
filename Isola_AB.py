@@ -361,7 +361,7 @@ class Alfabeta():
 
             if vrednost > vrednost_najboljse:
                 vrednost_najboljse = vrednost
-                najboljsa_poteza = p
+                najboljsa_poteza = (a, b)
 
         return (najboljsa_poteza, vrednost_najboljse)
 
@@ -401,7 +401,7 @@ class Alfabeta():
 
             if vrednost < vrednost_najboljse:
                 vrednost_najboljse = vrednost
-                najboljsa_poteza = p
+                najboljsa_poteza = (a, b)
 
         return (najboljsa_poteza, vrednost_najboljse)
 
