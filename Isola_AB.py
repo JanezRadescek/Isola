@@ -291,16 +291,66 @@ class Alfabeta():
 
 
     def vrednost_pozicije(self, i, j):
-        if self.igra_kopija.del_poteze:
+        if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
             return self.vrednost_pozicije_premik(i, j)
-        else:
+        else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
             return self.vrednost_pozicije_unici(i, j)
 
+
     def vrednost_pozicije_premik(self, i, j):
-        return 100
+        vrednost = 0
+        vre_prazno = 100
+        for a in self.igra_kopija.veljavne_poteze_premik():
+            vrednost += vre_prazno
+
+        return vrednost
 
     def vrednost_pozicije_unici(self, i, j):
-        return 100
+
+        if len(self.igra_kopija.veljavne_poteze_premik()) == 0:
+            return self.NESKONCNO
+
+        vrednost = 0
+        vre_ob_nasprotniku = 500
+
+        (a, b) = self.igra_kopija.pozicija_na_potezi()
+
+        razdalja = abs(a-i) + abs(b-j)
+        if razdalja <=3:
+            vrednost += (5-razdalja)*100
+
+        def st_unicene(self):
+            stevilo = 0
+            for a in range(3):
+                for b in range(3):
+                    c = i - 1 + a
+                    d = j - 1 + b
+                    if c >= 0 and c <= 6 and d >= 0 and d <= 6 and (self.igra_kopija.polje[i][j] == UNICENO):
+                        stevilo += 1
+            return stevilo
+
+        ste = st_unicene(self)
+        if ste >= 3:
+            return vrednost +10
+
+        else:
+
+            def polja_unicene(self):
+                polja = []
+                for a in range(3):
+                    for b in range(3):
+                        c = i - 1 + a
+                        d = j - 1 + b
+                        if c >= 0 and c <= 6 and d >= 0 and d <= 6 and (self.igra_kopija.polje[i][j] == UNICENO):
+                            polja.append(a+b)
+                return polja
+
+            for a in polja_unicene():
+                vrednost += (3-a)*100
+
+
+            return vrednost
+
 
 
     def albe(self, globina, maksimiziramo, na_ze_na_vrednost = NESKONCNO, zad_poteza = None):
