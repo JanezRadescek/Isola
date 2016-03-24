@@ -8,7 +8,7 @@ import threading
 
 
 VELIKOST_POLJA = 70
-GLOBINA = 3
+GLOBINA = 2
 VELJAVNO = "v"
 IGRALEC_1 = 1
 IGRALEC_2 = 2
