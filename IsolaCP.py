@@ -429,7 +429,7 @@ class Alfabeta():
                 #print("slaba veja")
                 #return (None, na_ze_na_vrednost)
 
-            if vrednost > vrednost_najboljse:
+            if vrednost > vrednost_najboljse:   #NISM ZIHR DA JE TO V REDU, VEČ INFO SLEDI
                 vrednost_najboljse = vrednost
                 najboljsa_poteza = (a, b)
 
