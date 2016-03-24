@@ -313,6 +313,27 @@ class Alfabeta():
         return vrednost
 
     def vrednost_pozicije_unici(self, i, j):
+        veljavne_poteze = self.igra_kopija.veljavne_poteze_premik()
+        if len(veljavne_poteze) == 0:
+            return self.NESKONCNO
+
+        (n, m) = self.igra_kopija.pozicija_na_potezi()
+        dobra_polja = []
+        for a in range(7):
+            for b in range(7):
+                if (abs(a - n))**2 + (abs(b - m))**2 <= 2:
+                    dobra_polja.append((a, b))
+
+        vrednost = 0
+        vre_ob_nasprotniku = 500
+        if (i, j) in dobra_polja :
+            print("jackpot")
+            return 500
+        else:
+            return 10
+
+    def vrednost_pozicije_unici1(self, i, j):
+        print("unicujemo polje (i, j)")
 
         if len(self.igra_kopija.veljavne_poteze_premik()) == 0:
             return self.NESKONCNO
@@ -384,17 +405,17 @@ class Alfabeta():
                 return self.albe_min(globina, na_ze_na_vrednost, zaporedje_potez)
 
 
-    def albe_max(self, globina, na_ze_na_vrednost = NESKONCNO, zaporedje_potez = None):
+    def albe_max(self, globina, na_ze_na_vrednost = 0, zaporedje_potez = None):
         print("max")
         najboljsa_poteza = None
-        vrednost_najboljse = -self.NESKONCNO
+        vrednost_najboljse = 0
         #print("max število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
-        print(c)
+        #print(c)
         if c == []:
             self.poteza_konec = zaporedje_potez[0]
             najboljsa_poteza = zaporedje_potez[0]
-            print(najboljsa_poteza, "c je prazen")
+            #print(najboljsa_poteza, "c je prazen")
 
         for (a, b) in c:
 
@@ -404,13 +425,13 @@ class Alfabeta():
             if self.igra_kopija.del_poteze != PREMIK:   ### še maksimiziramo
                 mak = (self.igra_kopija.del_poteze != PREMIK)
                 if najboljsa_poteza == None:                    #če kličemo prvič nimammo še ničesar s čimer bi primerjali
-                    alba_vrednost = self.NESKONCNO
+                    alba_vrednost = 0
                 else:
                     alba_vrednost = vrednost_najboljse
             else:                                       ### sedaj bomo mini
                 mak = (self.igra_kopija.del_poteze != PREMIK)
                 if najboljsa_poteza == None:
-                    alba_vrednost = -self.NESKONCNO
+                    alba_vrednost = 0
                 else:
                     alba_vrednost = vrednost_najboljse
 
@@ -421,7 +442,7 @@ class Alfabeta():
             self.igra_kopija.razveljavi()
             zaporedje_potez.pop()
 
-            print(a, b, "poteza, ki smo jo izvedli")
+            #print(a, b, "poteza, ki smo jo izvedli")
             #print(zaporedje_potez[-1])
             #if vrednost >= na_ze_na_vrednost:        ## alba-max kliče alba-min. se pravi če lahko nasprotnik naredi boljšo
                                                             ## kot jo je alba_min že našel potem je ta "veja zanič" in vrne takoj vrne
@@ -435,17 +456,17 @@ class Alfabeta():
 
         return (najboljsa_poteza, vrednost_najboljse)
 
-    def albe_min(self, globina, na_ze_na_vrednost = NESKONCNO, zaporedje_potez = None):
+    def albe_min(self, globina, na_ze_na_vrednost = 0, zaporedje_potez = None):
         print("min")
         najboljsa_poteza = None
         vrednost_najboljse = self.NESKONCNO
         #print("min število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
-        print(c)
+        #print(c)
         if c == []:
             self.poteza_konec = zaporedje_potez[0]
             najboljsa_poteza = zaporedje_potez[0]
-            print(najboljsa_poteza, "c je prazen")
+            #print(najboljsa_poteza, "c je prazen")
 
 
         for (a, b) in c:
@@ -456,23 +477,24 @@ class Alfabeta():
             if self.igra_kopija.del_poteze != PREMIK:         ###  še vedno minimiziramo
                 mak = (self.igra_kopija.del_poteze == PREMIK)
                 if najboljsa_poteza == None:
-                    alba_vrednost = -self.NESKONCNO
+                    alba_vrednost = 0
                 else:
                     alba_vrednost = vrednost_najboljse
             else:                                             ###  sedaj bomo maksimiziral
                 mak = (self.igra_kopija.del_poteze == PREMIK)
                 if najboljsa_poteza == None:
-                    alba_vrednost = self.NESKONCNO
+                    alba_vrednost = 0
                 else:
                     alba_vrednost = vrednost_najboljse
 
 
             (p,vrednost) = self.albe(globina-1, mak, alba_vrednost, zaporedje_potez)
+            #vrednost = -vrednost
 
             self.igra_kopija.razveljavi()
             zaporedje_potez.pop()
 
-            print(a, b, "poteza, ki smo jo izvedli")
+            #print(a, b, "poteza, ki smo jo izvedli")
             #if vrednost <= na_ze_na_vrednost:
                 #print("slaba veja")
                 #return (None, na_ze_na_vrednost)
