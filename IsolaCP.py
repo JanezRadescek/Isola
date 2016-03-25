@@ -381,7 +381,7 @@ class Alfabeta():
 
 
 
-    def albe(self, globina, maksimiziramo, na_ze_na_vrednost = NESKONCNO, zaporedje_potez = []):
+    def albe(self, globina, maksimiziramo, na_ze_na_vrednost = 0, zaporedje_potez = []):
         ##rabmo sam še eno ker so že poteze premiki brisanje sami vejo kaj pa kako
 
         if self.prekinitev:
@@ -450,7 +450,7 @@ class Alfabeta():
                 #print("slaba veja")
                 #return (None, na_ze_na_vrednost)
 
-            if vrednost > vrednost_najboljse:   #NISM ZIHR DA JE TO V REDU, VEČ INFO SLEDI
+            if vrednost > vrednost_najboljse:
                 vrednost_najboljse = vrednost
                 najboljsa_poteza = (a, b)
 
