@@ -8,7 +8,7 @@ import threading
 
 
 VELIKOST_POLJA = 70
-GLOBINA = 2
+GLOBINA = 1
 VELJAVNO = "v"
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -232,7 +232,8 @@ class Racunalnik():
             # Algoritem je našel potezo, povleci jo, če ni bilo prekinitve
             [(i, j), (n, m)] = self.algoritem.poteza
             print("rač naredi potezo", i, j)
-            self.gui.povleci_potezo(i, j)
+            self.gui.povleci_potezo(i, j, True, (n, m))
+            print("rac naredi unici n,m")
             self.gui.povleci_potezo(n, m)
             # Vzporedno vlakno ni več aktivno, zato ga "pozabimo"
             self.mislec = None
@@ -284,7 +285,7 @@ class Alfabeta():
         self.jaz = self.igra_kopija.na_potezi
         self.poteza = None
 
-        (poteza, vrednost) = self.albe(self.globina, True)
+        (poteza, vrednost) = self.albe(self.globina, True, 0, [])
         print("alba je našel", poteza)
         if len(poteza) < 2:
             print("to se ne bi smel zgodit")
@@ -299,10 +300,12 @@ class Alfabeta():
 
 
     def vrednost_pozicije(self, i, j):
-        if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
+        return 50
+        return random.randrange(500)
+        '''if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
             return self.vrednost_pozicije_premik(i, j)
         else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
-            return self.vrednost_pozicije_unici(i, j)
+            return self.vrednost_pozicije_unici(i, j)'''
 
 
     def vrednost_pozicije_premik(self, i, j):
@@ -396,7 +399,7 @@ class Alfabeta():
 
 
         print("izvajamo albe na globini", globina)
-
+        print(zaporedje_potez)
         if globina == 0:
             (i, j) = zaporedje_potez[-1]
             print("ocenjujemo polje", i, j)
@@ -430,9 +433,10 @@ class Alfabeta():
             d = self.igra_kopija.veljavne_poteze()
             for (n, m) in d:
                 #if self.igra_kopija.del_poteze != PREMIK:   ### še maksimiziramo
-                 #   mak = (self.igra_kopija.del_poteze != PREMIK)
+                     #   mak = (self.igra_kopija.del_poteze != PREMIK)
                 self.igra_kopija.naredi_pravo_potezo(n, m)
                 zaporedje_potez.append((n, m))
+                #print(zaporedje_potez)
                 if najboljsa_poteza == None:                    #če kličemo prvič nimammo še ničesar s čimer bi primerjali
                     alba_vrednost = 0
                 else:
@@ -449,8 +453,6 @@ class Alfabeta():
 
 
                 self.igra_kopija.razveljavi()
-                self.igra_kopija.razveljavi()
-                zaporedje_potez.pop()
                 zaporedje_potez.pop()
 
                 #print(a, b, "poteza, ki smo jo izvedli")
@@ -464,6 +466,9 @@ class Alfabeta():
                 if vrednost > vrednost_najboljse:
                     vrednost_najboljse = vrednost
                     najboljsa_poteza = [(a, b), (n, m)]
+
+            self.igra_kopija.razveljavi()
+            zaporedje_potez.pop()
 
         return (najboljsa_poteza, vrednost_najboljse)
 
@@ -584,13 +589,16 @@ class Gui():
 
         print ("KONEC!")
 
-    def povleci_potezo(self, i, j):
+    def povleci_potezo(self, i, j, racunalnik=False, unici=None):
         '''celoten potek poteze'''
 
         if (i, j) in self.igra.veljavne_poteze():
             self.narisi(i, j)
             self.igra.naredi_pravo_potezo(i, j)
             self.spremeni_napis()
+            if racunalnik:
+                self.povleci_potezo(unici[0],unici[1])
+
 
         else:
 
