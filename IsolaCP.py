@@ -8,7 +8,7 @@ import threading
 
 
 VELIKOST_POLJA = 70
-GLOBINA = 1
+GLOBINA = 3
 VELJAVNO = "v"
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -404,7 +404,7 @@ class Alfabeta():
         #print("maks =", maksimiziramo)
         #print(zaporedje_potez)
         if globina == 0:
-            poteza = (zaporedje_potez[-2], zaporedje_potez[-1])
+            poteza = (zaporedje_potez[0], zaporedje_potez[1])
             #print("ocenjujemo polje", poteza)
             return (poteza, self.vrednost_pozicije(poteza[1][0],poteza[1][1]))
 
