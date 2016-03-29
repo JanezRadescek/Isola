@@ -290,7 +290,7 @@ class Alfabeta():
         self.jaz = self.igra_kopija.na_potezi
         self.poteza = None
 
-        (poteza, vrednost) = self.albe(self.globina, True, 0, [])
+        (poteza, vrednost) = self.albe(self.globina, True, [])
         print("alba je našel", poteza)
         if len(poteza) < 2:
             print("to se ne bi smel zgodit")
@@ -394,7 +394,7 @@ class Alfabeta():
 
 
 
-    def albe(self, globina, maksimiziramo, alba_vrednost = 0, zaporedje_potez = []):
+    def albe(self, globina, maksimiziramo, zaporedje_potez= [], najboljsa_poteza = None, vrednost_najboljse = 0):
         ##rabmo sam še eno ker so že poteze premiki brisanje sami vejo kaj pa kako
 
         if self.prekinitev:
@@ -413,17 +413,17 @@ class Alfabeta():
 
         else:
             if maksimiziramo:
-                return self.albe_max(globina, alba_vrednost, zaporedje_potez)
+                return self.albe_max(globina, zaporedje_potez,najboljsa_poteza, vrednost_najboljse)
 
             else:
-                return self.albe_min(globina, alba_vrednost, zaporedje_potez)
+                return self.albe_min(globina, zaporedje_potez, najboljsa_poteza, vrednost_najboljse)
 
 
-    def albe_max(self, globina, alba_vrednost = 0, zaporedje_potez = [], najboljsa_poteza = None, vrednost_najboljse = 0):
+    def albe_max(self, globina, zaporedje_potez = [], najboljsa_poteza = None, vrednost_najboljse = 0):
         #print("max")
-        if zaporedje_potez == []:
-            najboljsa_poteza = None
-            vrednost_najboljse = 0
+        #if zaporedje_potez == []:
+            #najboljsa_poteza = None
+            #vrednost_najboljse = 0
         #print("max število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
         #print(c)
@@ -461,7 +461,7 @@ class Alfabeta():
                         alba_vrednost = vrednost_najboljse'''
 
 
-                (poteza,vrednost) = self.albe(globina-1, False, alba_vrednost, zaporedje_potez)
+                (poteza,vrednost) = self.albe(globina-1, False, zaporedje_potez, najboljsa_poteza, vrednost_najboljse)
 
 
                 self.igra_kopija.razveljavi()
@@ -484,11 +484,11 @@ class Alfabeta():
 
         return (najboljsa_poteza, vrednost_najboljse)
 
-    def albe_min(self, globina, alba_vrednost = 0, zaporedje_potez = [], najboljsa_poteza = None, vrednost_najboljse = 0):
+    def albe_min(self, globina, zaporedje_potez = [], najboljsa_poteza = None, vrednost_najboljse = 0):
         #print("min")
-        if zaporedje_potez == []:
-            najboljsa_poteza = None
-            vrednost_najboljse = 0
+        #if zaporedje_potez == []:
+            #najboljsa_poteza = None
+            #vrednost_najboljse = 0
         #print("min število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
         #print(c)
@@ -534,7 +534,7 @@ class Alfabeta():
                     alba_vrednost = vrednost_najboljse'''
 
 
-                (poteza,vrednost) = self.albe(globina-1, True, alba_vrednost, zaporedje_potez)
+                (poteza,vrednost) = self.albe(globina-1, True, zaporedje_potez, najboljsa_poteza, vrednost_najboljse)
                 #vrednost = -vrednost
 
                 self.igra_kopija.razveljavi()
