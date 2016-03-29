@@ -8,7 +8,7 @@ import threading
 
 
 VELIKOST_POLJA = 70
-GLOBINA = 2
+GLOBINA = 1
 VELJAVNO = "v"
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -435,6 +435,11 @@ class Alfabeta():
             zaporedje_potez.append((a, b))
 
             d = self.igra_kopija.veljavne_poteze()
+
+            if d == []:
+                self.poteza_konec = (zaporedje_potez[0], zaporedje_potez [1])
+                najboljsa_poteza = (zaporedje_potez[0], zaporedje_potez[1])
+
             for (n, m) in d:
                 #if self.igra_kopija.del_poteze != PREMIK:   ### še maksimiziramo
                      #   mak = (self.igra_kopija.del_poteze != PREMIK)
@@ -498,6 +503,10 @@ class Alfabeta():
             #print(zaporedje_potez)
 
             d = self.igra_kopija.veljavne_poteze()
+
+            if d == []:
+                self.poteza_konec = (zaporedje_potez[0], zaporedje_potez [1])
+                najboljsa_poteza = (zaporedje_potez[0], zaporedje_potez[1])
             for (n, m) in d:
                 #if self.igra_kopija.del_poteze != PREMIK:   ### še maksimiziramo
                  #   mak = (self.igra_kopija.del_poteze != PREMIK)
@@ -617,7 +626,7 @@ class Gui():
                 self.koncaj_igro()
         else:
             if self.igra.na_potezi == IGRALEC_1:
-                self.igralec_1.igraj()
+                self.igralec_1.igraj(unici[0],unici[1])
             else:
                 self.igralec_2.igraj(unici[0],unici[1])
 
