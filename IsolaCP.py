@@ -1,14 +1,17 @@
 import tkinter
 import random
 from itertools import product
-import winsound
+try:
+    import winsound
+except:
+    pass
 import logging
 import argparse
 import threading
 
 
 VELIKOST_POLJA = 70
-GLOBINA = 3
+GLOBINA = 2
 VELJAVNO = "v"
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -303,7 +306,7 @@ class Alfabeta():
 
     def vrednost_pozicije(self, i, j):
         #return 50
-        return random.randrange(500)
+        return random.randrange(50000)
         '''if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
             return self.vrednost_pozicije_premik(i, j)
         else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
