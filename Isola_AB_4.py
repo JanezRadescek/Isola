@@ -295,11 +295,14 @@ class Alfabeta():
 
 
     def vrednost_pozicije(self, i, j):
+    ##
+        #aa = self.vrednost_pozicije_premik(i, j)
+        #bb = self.vrednost_pozicije_unici(i, j)
 
-        aa = self.vrednost_pozicije_premik(i, j)
-        bb = self.vrednost_pozicije_unici(i, j)
+        aa = random.randint(1, 1000)
+        bb = random.randint(1, 1000)
 
-
+                                            ### če ocenjujemo kam smo se glihkar premaknili nam je važno samo
         if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
             return aa
         else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
