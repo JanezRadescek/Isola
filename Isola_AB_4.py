@@ -295,10 +295,15 @@ class Alfabeta():
 
 
     def vrednost_pozicije(self, i, j):
+
+        aa = self.vrednost_pozicije_premik(i, j)
+        bb = self.vrednost_pozicije_unici(i, j)
+
+
         if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
-            return self.vrednost_pozicije_premik(i, j)
+            return aa
         else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
-            return self.vrednost_pozicije_unici(i, j)
+            return bb
 
 
     def vrednost_pozicije_premik(self, i, j):
@@ -343,7 +348,7 @@ class Alfabeta():
 
         else:
 
-            def polja_unicene(self):
+            def polja_unicene():
                 polja = []
                 for a in range(3):
                     for b in range(3):
@@ -352,6 +357,7 @@ class Alfabeta():
                         if c >= 0 and c <= 6 and d >= 0 and d <= 6 and (self.igra_kopija.polje[i][j] == UNICENO):
                             polja.append(a+b)
                 return polja
+
 
             for a in polja_unicene():
                 vrednost += (3-a)*100
@@ -417,7 +423,7 @@ class Alfabeta():
             print(a, b)
 
 
-            if (vrednost == self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
+            if (vrednost >= self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
                 self.poteza_konec = zap_potez[0]
 
 
@@ -463,7 +469,7 @@ class Alfabeta():
 
             (p,vrednost) = self.albe(globina-1, False, alba_vrednost, zap_potez)
 
-            if (vrednost == self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
+            if (vrednost >= self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
                 self.poteza_konec = zap_potez[0]
 
             self.igra_kopija.razveljavi()
