@@ -268,6 +268,7 @@ class Alfabeta():
         self.igra_kopija = None
         self.jaz = None
         self.poteza = None
+        self.poteza_konec = None
 
     def prekini(self):
         """Metoda, ki jo pokliče GUI, če je treba nehati razmišljati, ker
@@ -282,12 +283,15 @@ class Alfabeta():
         self.poteza = None
 
         (poteza, vrednost) = self.albe(self.globina, True)
-        print("alba je našel", poteza)
+        print("alba je našel", poteza, vrednost)
         self.jaz = None
         self.igra_kopija = None
 
         if not self.prekinitev:
-            self.poteza = poteza
+            if self.poteza_konec == None:
+                self.poteza = poteza
+            else:
+                self.poteza = self.poteza_konec
 
 
     def vrednost_pozicije(self, i, j):
@@ -310,7 +314,7 @@ class Alfabeta():
     def vrednost_pozicije_unici(self, i, j):
 
         if len(self.igra_kopija.veljavne_poteze_premik()) == 0:
-            print("vrednost polja unici", self.NESKONCNO)
+            print("vrednost polja unici zmaga", self.NESKONCNO)
             return self.NESKONCNO
 
         vrednost = 0
@@ -379,45 +383,49 @@ class Alfabeta():
 
             else:
                 if self.igra_kopija.del_poteze == PREMIK:
-                    return self.albe_min_pre(globina, na_ze_na_vrednost, zad_poteza)
+                    return self.albe_min_pre(globina, na_ze_na_vrednost, zap_potez)
                 else:
-                    return self.albe_min_uni(globina, na_ze_na_vrednost, zad_poteza)
+                    return self.albe_min_uni(globina, na_ze_na_vrednost, zap_potez)
 
 
-    def albe_max(self, globina, na_ze_na_vrednost = NESKONCNO, zad_poteza = None):
-        print("max")
-        najboljsa_poteza = None
+    def albe_max_pre(self, globina, na_ze_na_vrednost, zap_potez):
+        print("max_pre")
+        najboljsa_poteza = (None, None)
         vrednost_najboljse = -self.NESKONCNO
-        #print("max število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
+
         c = self.igra_kopija.veljavne_poteze()
+        if len(c) == 0:
+            print("max_pre ni veljavnih potez")
+            return (zap_potez[0], -self.NESKONCNO)
+
         for (a, b) in c:
 
             self.igra_kopija.naredi_pravo_potezo(a, b)
 
-            if self.igra_kopija.del_poteze != PREMIK:   ### še maksimiziramo
-                mak = (self.igra_kopija.del_poteze != PREMIK)
-                if najboljsa_poteza == None:                    #če kličemo prvič nimammo še ničesar s čimer bi primerjali
-                    alba_vrednost = self.NESKONCNO
-                else:
-                    alba_vrednost = vrednost_najboljse
-            else:                                       ### sedaj bomo mini
-                mak = (self.igra_kopija.del_poteze != PREMIK)
-                if najboljsa_poteza == None:
-                    alba_vrednost = -self.NESKONCNO
-                else:
-                    alba_vrednost = vrednost_najboljse
+            zap_potez.append((a, b))
+            if najboljsa_poteza == None:                    #če kličemo prvič nimammo še ničesar s čimer bi primerjali
+                alba_vrednost = self.NESKONCNO
+            else:
+                alba_vrednost = vrednost_najboljse
 
-
-            (p,vrednost) = self.albe(globina-1, mak, alba_vrednost, (a, b))
+            (p,vrednost) = self.albe(globina-1, True, alba_vrednost, zap_potez)
 
 
             self.igra_kopija.razveljavi()
+            zap_potez.pop()
+
             print(a, b)
 
-            
+
+            if (vrednost == self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
+                self.poteza_konec = zap_potez[0]
+
+
             if vrednost >= na_ze_na_vrednost:        ## alba-max kliče alba-min. se pravi če lahko nasprotnik naredi boljšo
                                                             ## kot jo je alba_min že našel potem je ta "veja zanič" in vrne takoj vrne
                                                             ##  neskončno, da je alba-min ne uporabi
+
+
                 print("slaba veja")
                 return (None, na_ze_na_vrednost)
 
@@ -427,38 +435,123 @@ class Alfabeta():
 
         return (najboljsa_poteza, vrednost_najboljse)
 
-    def albe_min(self, globina, na_ze_na_vrednost = NESKONCNO, zad_poteza = None):
-        print("min")
-        najboljsa_poteza = None
-        vrednost_najboljse = self.NESKONCNO
-        #print("min število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
+
+
+    def albe_max_uni(self, globina, na_ze_na_vrednost, zap_potez):
+    #tu ne moremo uporabiti alba rezanja saj smo še vedno mi napotezi.
+
+
+        print("max_uni")
+        najboljsa_poteza = (None, None)
+        vrednost_najboljse = -self.NESKONCNO
+        #print("max število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
+
+        if len(c) == 0:
+            print("max_uni nima veljavnih potez")
+
         for (a, b) in c:
 
             self.igra_kopija.naredi_pravo_potezo(a, b)
+            zap_potez.append((a, b))
 
-            if self.igra_kopija.del_poteze != PREMIK:         ###  še vedno minimiziramo
-                mak = (self.igra_kopija.del_poteze == PREMIK)
-                if najboljsa_poteza == None:
-                    alba_vrednost = -self.NESKONCNO
-                else:
-                    alba_vrednost = vrednost_najboljse
-            else:                                             ###  sedaj bomo maksimiziral
-                mak = (self.igra_kopija.del_poteze == PREMIK)
-                if najboljsa_poteza == None:
-                    alba_vrednost = -self.NESKONCNO
-                else:
-                    alba_vrednost = vrednost_najboljse
+            if najboljsa_poteza == None:                    #če kličemo prvič nimammo še ničesar s čimer bi primerjali
+                alba_vrednost = -self.NESKONCNO
+            else:
+                alba_vrednost = vrednost_najboljse
 
 
-            (p,vrednost) = self.albe(globina-1, mak, alba_vrednost, (a, b))
+            (p,vrednost) = self.albe(globina-1, False, alba_vrednost, zap_potez)
+
+            if (vrednost == self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
+                self.poteza_konec = zap_potez[0]
 
             self.igra_kopija.razveljavi()
+            zap_potez.pop()
 
             print(a, b)
+
+
+            if vrednost > vrednost_najboljse:
+                vrednost_najboljse = vrednost
+                najboljsa_poteza = (a, b)
+
+        return (najboljsa_poteza, vrednost_najboljse)
+
+
+    def albe_min_pre(self, globina, na_ze_na_vrednost, zap_potez):
+        print("min_pre")
+        najboljsa_poteza = (None, None)
+        vrednost_najboljse = self.NESKONCNO
+
+        c = self.igra_kopija.veljavne_poteze()
+        if len(c) == 0:
+            print("max_pre ni veljavnih potez")
+            self.poteza_konec = zap_potez[0]
+            return (zap_potez[0],self.NESKONCNO)
+
+        for (a, b) in c:
+
+            self.igra_kopija.naredi_pravo_potezo(a, b)
+            zap_potez.append((a, b))
+
+
+            if najboljsa_poteza == None:                    #če kličemo prvič nimammo še ničesar s čimer bi primerjali
+                alba_vrednost = -self.NESKONCNO
+            else:
+                alba_vrednost = vrednost_najboljse
+
+
+            (p,vrednost) = self.albe(globina-1, False, alba_vrednost, zap_potez)
+
+            self.igra_kopija.razveljavi()
+            zap_potez.pop()
+
+            print(a, b)
+
             if vrednost <= na_ze_na_vrednost:
                 print("slaba veja")
                 return (None, na_ze_na_vrednost)
+
+
+            if vrednost < vrednost_najboljse:
+                vrednost_najboljse = vrednost
+                najboljsa_poteza = (a, b)
+
+        return (najboljsa_poteza, vrednost_najboljse)
+
+
+
+    def albe_min_uni(self, globina, na_ze_na_vrednost, zap_potez):
+        #ne režemo
+
+        print("min_uni")
+        najboljsa_poteza = (None, None)
+        vrednost_najboljse = self.NESKONCNO
+        #print("min število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
+        c = self.igra_kopija.veljavne_poteze()
+        if len(c) == 0:
+            print("min_uni nima veljavnih potez")
+
+        for (a, b) in c:
+
+            self.igra_kopija.naredi_pravo_potezo(a, b)
+            zap_potez.append((a,b))
+
+
+            if najboljsa_poteza == None:                    #če kličemo prvič nimammo še ničesar s čimer bi primerjali
+                alba_vrednost = self.NESKONCNO
+            else:
+                alba_vrednost = vrednost_najboljse
+
+
+            (p,vrednost) = self.albe(globina-1, True, alba_vrednost, zap_potez)
+
+            self.igra_kopija.razveljavi()
+            zap_potez.pop()
+
+            print(a, b)
+
 
 
             if vrednost < vrednost_najboljse:
@@ -499,7 +592,8 @@ class Gui():
 
 
     def izbira_igralcev(self):
-        self.igralec_1 = Clovek(self)
+        #self.igralec_1 = Clovek(self)
+        self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
         #self.igralec_2 = Clovek(self)
         self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
         self.zacni_igro()
