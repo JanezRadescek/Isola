@@ -298,16 +298,19 @@ class Alfabeta():
 
 
     def vrednost_pozicije_premik(self, i, j):
+
         vrednost = 0
         vre_prazno = 100
         for a in self.igra_kopija.veljavne_poteze_premik():
             vrednost += vre_prazno
 
+        print("vrednost polja premik", vrednost)
         return vrednost
 
     def vrednost_pozicije_unici(self, i, j):
 
         if len(self.igra_kopija.veljavne_poteze_premik()) == 0:
+            print("vrednost polja unici", self.NESKONCNO)
             return self.NESKONCNO
 
         vrednost = 0
@@ -331,6 +334,7 @@ class Alfabeta():
 
         ste = st_unicene(self)
         if ste >= 3:
+            print("vrednost polja unici", vrednost +10)
             return vrednost +10
 
         else:
@@ -348,12 +352,12 @@ class Alfabeta():
             for a in polja_unicene():
                 vrednost += (3-a)*100
 
-
+            print("vrednost polja unici", vrednost)
             return vrednost
 
 
 
-    def albe(self, globina, maksimiziramo, na_ze_na_vrednost = NESKONCNO, zad_poteza = None):
+    def albe(self, globina, maksimiziramo, na_ze_na_vrednost = NESKONCNO, zap_potez = []):
         ##rabmo sam še eno ker so že poteze premiki brisanje sami vejo kaj pa kako
         if self.prekinitev:
              # Sporočili so nam, da moramo prekiniti
@@ -362,16 +366,22 @@ class Alfabeta():
         print("izvajamo albe na globini", globina)
 
         if globina == 0:
-            (i, j) = zad_poteza
+            (i, j) = zap_potez[-1]
             print("ocenjujemo polje", i, j)
             return ((i,j), self.vrednost_pozicije(i, j))
 
         else:
             if maksimiziramo:
-                return self.albe_max(globina, na_ze_na_vrednost, zad_poteza)
+                if self.igra_kopija.del_poteze == PREMIK:
+                    return self.albe_max_pre(globina, na_ze_na_vrednost, zap_potez)
+                else:
+                    return self.albe_max_uni(globina, na_ze_na_vrednost, zap_potez)
 
             else:
-                return self.albe_min(globina, na_ze_na_vrednost, zad_poteza)
+                if self.igra_kopija.del_poteze == PREMIK:
+                    return self.albe_min_pre(globina, na_ze_na_vrednost, zad_poteza)
+                else:
+                    return self.albe_min_uni(globina, na_ze_na_vrednost, zad_poteza)
 
 
     def albe_max(self, globina, na_ze_na_vrednost = NESKONCNO, zad_poteza = None):
