@@ -294,30 +294,42 @@ class Alfabeta():
                 self.poteza = self.poteza_konec
 
 
-    def vrednost_pozicije(self, i, j):
-    ##
-        #aa = self.vrednost_pozicije_premik(i, j)
-        #bb = self.vrednost_pozicije_unici(i, j)
+    def vrednost_pozicije(self, i, j, zap_potez):
+    #Ocenjujemo stanje plošče ne pa zadnjo potezo !!.
+        #if self.igra_kopija.del_poteze == UNICENJE:
+        return self.vrednost_pozicij_premik(i, j)
+        #else:
+        #    return self.vrednost_pozicij_premik(i, j) +
 
-        aa = random.randint(1, 1000)
-        bb = random.randint(1, 1000)
+
+
 
                                             ### če ocenjujemo kam smo se glihkar premaknili nam je važno samo
-        if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
-            return aa
-        else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
-            return bb
+        #if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
+        #    return aa
+        #else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
+        #    return bb
 
 
-    def vrednost_pozicije_premik(self, i, j):
+    def vrednost_pozicij_premik(self, i, j):
 
-        vrednost = 0
-        vre_prazno = 100
-        for a in self.igra_kopija.veljavne_poteze_premik():
-            vrednost += vre_prazno
+        vsota = 1000    #nova ničla
+        vsota1 = 0
+        vsota2 = 0
 
-        print("vrednost polja premik", vrednost)
-        return vrednost
+        for _ in self.igra_kopija.veljavne_poteze():
+            vsota1 += 100
+        for _ in self.igra_kopija.veljavne_poteze(True):
+            vsota2 += 100
+
+        if self.jaz == self.igra_kopija.na_potezi:
+            vsota2 *= -1
+        else:
+            vsota1 *= -1
+
+        vsota += vsota1 + vsota2
+
+        return vsota
 
     def vrednost_pozicije_unici(self, i, j):
 
@@ -381,7 +393,9 @@ class Alfabeta():
         if globina == 0:
             (i, j) = zap_potez[-1]
             print("ocenjujemo polje", i, j)
-            return ((i,j), self.vrednost_pozicije(i, j))
+            if len(zap_potez) != GLOBINA:
+                print("globina in GLOBINA se ne ujemata")
+            return ((i,j), self.vrednost_pozicije(i, j, zap_potez))
 
         else:
             if maksimiziramo:
@@ -601,8 +615,8 @@ class Gui():
 
 
     def izbira_igralcev(self):
-        #self.igralec_1 = Clovek(self)
-        self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
+        self.igralec_1 = Clovek(self)
+        #self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
         #self.igralec_2 = Clovek(self)
         self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
         self.zacni_igro()
