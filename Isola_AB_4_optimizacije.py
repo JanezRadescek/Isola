@@ -161,8 +161,6 @@ class Igra():
             else:
                 self.pozicija_2 = (i, j)
             self.del_poteze = UNICENJE
-        else:
-            print(self.na_potezi, "klice premik na nedovoljenem polju", i, j)
 
     def unici(self, i, j):
         '''uniči veljavno polje, spremeni del poteze, zamenja igralca'''
@@ -172,8 +170,6 @@ class Igra():
             self.polje[i][j] = UNICENO
             self.del_poteze = PREMIK
             self.na_potezi = nasprotnik(self.na_potezi)
-        else:
-            print(self.na_potezi, "klice unici na nedovoljenem polju")
 
     def zmagovalec(self):
         pass
@@ -281,7 +277,6 @@ class Alfabeta():
         self.poteza = None
 
         (poteza, vrednost) = self.albe(self.globina, True)
-        print("Najdena poteza je", poteza)
 
         self.jaz = None
         self.igra_kopija = None
@@ -325,8 +320,6 @@ class Alfabeta():
         if globina == 0:
             (i, j) = zap_potez[-1]
 
-            if len(zap_potez) != GLOBINA:
-                print("globina in GLOBINA se ne ujemata")
             return ((i,j), self.vrednost_pozicije(i, j, zap_potez))
 
         else:
@@ -395,8 +388,6 @@ class Alfabeta():
         vrednost_najboljse = -self.NESKONCNO
         c = self.igra_kopija.veljavne_poteze()
         random.shuffle(c)
-        if len(c) == 0:
-            print("max_uni nima veljavnih potez")
 
         for (a, b) in c:
 
@@ -476,9 +467,6 @@ class Alfabeta():
         vrednost_najboljse = self.NESKONCNO
         c = self.igra_kopija.veljavne_poteze()
         random.shuffle(c)
-
-        if len(c) == 0:
-            print("min_uni nima veljavnih potez")
 
         for (a, b) in c:
 
@@ -560,8 +548,6 @@ class Gui():
         elif self.igralci == ["racunalnik","racunalnik"]:
             self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
             self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
-        else:
-            print("napacni igralci")
         self.zacni_igro()
 
     def zacni_igro(self):
@@ -577,7 +563,7 @@ class Gui():
     def koncaj_igro(self):
         '''Nastavi stanje igre na konec igre.'''
 
-        print ("KONEC!")
+        self.napis.set("KONEC")
 
     def povleci_potezo(self, i, j):
         '''celoten potek poteze'''
@@ -763,9 +749,6 @@ class Meni():
 
 
 
-        print("options")
-
-
     def help(self):
         if self.aplication2 != None:
             self.aplication2.unici()
@@ -781,7 +764,6 @@ class Meni():
         self.plosca.create_text(self.velikost_plosce/2, self.velikost_polja*5, text = navodila, font=("Helvetica", 15))
         self.plosca.create_image(self.velikost_plosce/2, 130, image = self.slika_kappa)
         self
-        print("help")
 
         pass
 
