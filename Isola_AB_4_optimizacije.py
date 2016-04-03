@@ -8,7 +8,7 @@ import threading
 
 
 VELIKOST_POLJA = 70
-GLOBINA = 2
+GLOBINA = 4
 VELJAVNO = None
 IGRALEC_1 = 1
 IGRALEC_2 = 2
@@ -64,10 +64,8 @@ class Igra():
     def shrani_pozicijo(self):
         pol = [self.polje[i][:] for i in range(7)]
         self.zgodovina.append((pol, self.na_potezi, self.del_poteze, self.pozicija_1, self.pozicija_2))
-        #print("shrani potezo, na potezi je", self.na_potezi)
 
     def razveljavi(self):
-        #print("razveljavljanje poteze, na potezi je bil", self.na_potezi)
         (self.polje, self.na_potezi, self.del_poteze, self.pozicija_1, self.pozicija_2) = self.zgodovina.pop()
 
 
@@ -154,7 +152,6 @@ class Igra():
         '''premaknemo se na veljavno polje, staro polje naredimo spet veljavno, zapišemo pozicijo igralca, zamenjamo del poteze'''
 
         if (i, j) in self.veljavne_poteze_premik():
-            print("naredimo premik na polje", i, j)
             self.shrani_pozicijo()
             self.polje[i][j] = self.na_potezi
             (c, d) = self.pozicija_na_potezi()
@@ -171,7 +168,6 @@ class Igra():
         '''uniči veljavno polje, spremeni del poteze, zamenja igralca'''
 
         if (i, j) in self.veljavne_poteze_unici():
-            print("naredimo uničenje na polju", i, j)
             self.shrani_pozicijo()
             self.polje[i][j] = UNICENO
             self.del_poteze = PREMIK
@@ -230,7 +226,6 @@ class Racunalnik():
         if self.algoritem.poteza is not None:
             # Algoritem je našel potezo, povleci jo, če ni bilo prekinitve
             i, j = self.algoritem.poteza
-            print("rač naredi potezo", i, j)
             self.gui.povleci_potezo(i, j)
             # Vzporedno vlakno ni več aktivno, zato ga "pozabimo"
             self.mislec = None
@@ -283,7 +278,6 @@ class Alfabeta():
         self.poteza = None
 
         (poteza, vrednost) = self.albe(self.globina, True)
-        print("alba je našel", poteza, vrednost)
         self.jaz = None
         self.igra_kopija = None
 
@@ -296,25 +290,6 @@ class Alfabeta():
 
     def vrednost_pozicije(self, i, j, zap_potez):
     #Ocenjujemo stanje plošče ne pa zadnjo potezo !!.
-        #if self.igra_kopija.del_poteze == UNICENJE:
-        vrni = self.vrednost_pozicij_premik(i, j)
-        print(vrni)
-        return vrni
-        #else:
-        #    return self.vrednost_pozicij_premik(i, j) +
-
-
-
-
-                                            ### če ocenjujemo kam smo se glihkar premaknili nam je važno samo
-        #if not self.igra_kopija.del_poteze:  ####  mi se premaknemo na a,b toda sedaj je del poteze unici ceprav nas zanima premik
-        #    return aa
-        #else:                                  ### smo uničili sedaj je na potezi nasprotnik da se premakne
-        #    return bb
-
-
-    def vrednost_pozicij_premik(self, i, j):
-
         vsota = 1000    #nova ničla
         vsota1 = 0
         vsota2 = 0
@@ -333,56 +308,6 @@ class Alfabeta():
 
         return vsota
 
-    def vrednost_pozicije_unici(self, i, j):
-
-        if len(self.igra_kopija.veljavne_poteze_premik()) == 0:
-            print("vrednost polja unici zmaga", self.NESKONCNO)
-            return self.NESKONCNO
-
-        vrednost = 0
-        vre_ob_nasprotniku = 500
-
-        (a, b) = self.igra_kopija.pozicija_na_potezi()
-
-        razdalja = abs(a-i) + abs(b-j)
-        if razdalja <=3:
-            vrednost += (5-razdalja)*100
-
-        def st_unicene(self):
-            stevilo = 0
-            for a in range(3):
-                for b in range(3):
-                    c = i - 1 + a
-                    d = j - 1 + b
-                    if c >= 0 and c <= 6 and d >= 0 and d <= 6 and (self.igra_kopija.polje[i][j] == UNICENO):
-                        stevilo += 1
-            return stevilo
-
-        ste = st_unicene(self)
-        if ste >= 3:
-            print("vrednost polja unici", vrednost +10)
-            return vrednost +10
-
-        else:
-
-            def polja_unicene():
-                polja = []
-                for a in range(3):
-                    for b in range(3):
-                        c = i - 1 + a
-                        d = j - 1 + b
-                        if c >= 0 and c <= 6 and d >= 0 and d <= 6 and (self.igra_kopija.polje[i][j] == UNICENO):
-                            polja.append(a+b)
-                return polja
-
-
-            for a in polja_unicene():
-                vrednost += (3-a)*100
-
-            print("vrednost polja unici", vrednost)
-            return vrednost
-
-
 
     def albe(self, globina, maksimiziramo, na_ze_na_vrednost = NESKONCNO, zap_potez = []):
         ##rabmo sam še eno ker so že poteze premiki brisanje sami vejo kaj pa kako
@@ -390,11 +315,11 @@ class Alfabeta():
              # Sporočili so nam, da moramo prekiniti
              logging.debug ("Minimax prekinja, globina = {0}".format(globina))
              return (None, 0)
-        print("izvajamo albe na globini", globina)
+
 
         if globina == 0:
             (i, j) = zap_potez[-1]
-            print("ocenjujemo polje", i, j)
+
             if len(zap_potez) != GLOBINA:
                 print("globina in GLOBINA se ne ujemata")
             return ((i,j), self.vrednost_pozicije(i, j, zap_potez))
@@ -414,15 +339,15 @@ class Alfabeta():
 
 
     def albe_max_pre(self, globina, na_ze_na_vrednost, zap_potez):
-        print("max_pre")
+
         najboljsa_poteza = (None, None)
         vrednost_najboljse = -self.NESKONCNO
 
         c = self.igra_kopija.veljavne_poteze()
-        random.shuffle(c)
         if len(c) == 0:
-            print("max_pre ni veljavnih potez")
             return (zap_potez[0], -self.NESKONCNO)
+
+        random.shuffle(c)
 
         for (a, b) in c:
 
@@ -436,11 +361,8 @@ class Alfabeta():
 
             (p,vrednost) = self.albe(globina-1, True, alba_vrednost, zap_potez)
 
-
             self.igra_kopija.razveljavi()
             zap_potez.pop()
-
-            print(a, b)
 
 
             if (vrednost >= self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
@@ -451,8 +373,6 @@ class Alfabeta():
                                                             ## kot jo je alba_min že našel potem je ta "veja zanič" in vrne takoj vrne
                                                             ##  neskončno, da je alba-min ne uporabi
 
-
-                print("slaba veja")
                 return (None, na_ze_na_vrednost)
 
             if vrednost > vrednost_najboljse:
@@ -465,11 +385,8 @@ class Alfabeta():
     def albe_max_uni(self, globina, na_ze_na_vrednost, zap_potez):
     #tu ne moremo uporabiti alba rezanja saj smo še vedno mi napotezi.
 
-
-        print("max_uni")
         najboljsa_poteza = (None, None)
         vrednost_najboljse = -self.NESKONCNO
-        #print("max število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
         random.shuffle(c)
         if len(c) == 0:
@@ -488,13 +405,12 @@ class Alfabeta():
 
             (p,vrednost) = self.albe(globina-1, False, alba_vrednost, zap_potez)
 
-            if (vrednost >= self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
-                self.poteza_konec = zap_potez[0]
-
             self.igra_kopija.razveljavi()
             zap_potez.pop()
 
-            print(a, b)
+            if (vrednost >= self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
+                self.poteza_konec = zap_potez[0]
+
 
 
             if vrednost > vrednost_najboljse:
@@ -505,7 +421,7 @@ class Alfabeta():
 
 
     def albe_min_pre(self, globina, na_ze_na_vrednost, zap_potez):
-        print("min_pre")
+
         najboljsa_poteza = (None, None)
         vrednost_najboljse = self.NESKONCNO
 
@@ -513,7 +429,6 @@ class Alfabeta():
         random.shuffle(c)
 
         if len(c) == 0:
-            print("max_pre ni veljavnih potez")
             self.poteza_konec = zap_potez[0]
             return (zap_potez[0],self.NESKONCNO)
 
@@ -534,10 +449,8 @@ class Alfabeta():
             self.igra_kopija.razveljavi()
             zap_potez.pop()
 
-            print(a, b)
 
             if vrednost <= na_ze_na_vrednost:
-                print("slaba veja")
                 return (None, na_ze_na_vrednost)
 
 
@@ -551,10 +464,9 @@ class Alfabeta():
     def albe_min_uni(self, globina, na_ze_na_vrednost, zap_potez):
         #ne režemo
 
-        print("min_uni")
+
         najboljsa_poteza = (None, None)
         vrednost_najboljse = self.NESKONCNO
-        #print("min število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
         random.shuffle(c)
 
@@ -577,9 +489,6 @@ class Alfabeta():
 
             self.igra_kopija.razveljavi()
             zap_potez.pop()
-
-            print(a, b)
-
 
 
             if vrednost < vrednost_najboljse:
