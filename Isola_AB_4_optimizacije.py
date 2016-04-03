@@ -774,12 +774,13 @@ class Meni():
         navodila = NAVODILA
 
         self.aplication2.spremeni_napis(napis_help)
-
+        self.slika_kappa = tkinter.PhotoImage(file="files\kappa.png")
         self.velikost_plosce = 7 * self.velikost_polja
         self.plosca = tkinter.Canvas(self.master, width=self.velikost_plosce, height=self.velikost_plosce)
         self.plosca.grid(row=1, column=0, rowspan = 2, columnspan = 4)
-        self.plosca.create_text(self.velikost_plosce/2, self.velikost_polja*5, text = navodila)
-
+        self.plosca.create_text(self.velikost_plosce/2, self.velikost_polja*5, text = navodila, font=("Helvetica", 15))
+        self.plosca.create_image(self.velikost_plosce/2, 130, image = self.slika_kappa)
+        self
         print("help")
 
         pass
