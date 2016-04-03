@@ -756,8 +756,10 @@ class Meni():
         self.gumb3.grid(row=2, column=0, columnspan=2)
         self.gumb4 = tkinter.Button(self.master, text="EvP", font=("Helvetica", 16), command=izbira_igralcev_evp, height=(4), width=(10))
         self.gumb4.grid(row=2, column=2, columnspan=2)
-        if self.plosca == None:
+        try:
             self.plosca.delete("all")
+        except:
+            pass
 
 
 
@@ -775,7 +777,7 @@ class Meni():
 
         self.velikost_plosce = 7 * self.velikost_polja
         self.plosca = tkinter.Canvas(self.master, width=self.velikost_plosce, height=self.velikost_plosce)
-        self.plosca.grid(row=1, column=0, columnspan = 4)
+        self.plosca.grid(row=1, column=0, rowspan = 2, columnspan = 4)
         self.plosca.create_text(self.velikost_plosce/2, self.velikost_polja*5, text = navodila)
 
         print("help")
