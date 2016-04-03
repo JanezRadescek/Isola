@@ -297,7 +297,9 @@ class Alfabeta():
     def vrednost_pozicije(self, i, j, zap_potez):
     #Ocenjujemo stanje plošče ne pa zadnjo potezo !!.
         #if self.igra_kopija.del_poteze == UNICENJE:
-        return self.vrednost_pozicij_premik(i, j)
+        vrni = self.vrednost_pozicij_premik(i, j)
+        print(vrni)
+        return vrni
         #else:
         #    return self.vrednost_pozicij_premik(i, j) +
 
@@ -317,15 +319,17 @@ class Alfabeta():
         vsota1 = 0
         vsota2 = 0
 
-        for _ in self.igra_kopija.veljavne_poteze():
+        for _ in self.igra_kopija.veljavne_poteze_premik():
             vsota1 += 100
-        for _ in self.igra_kopija.veljavne_poteze(True):
+        for _ in self.igra_kopija.veljavne_poteze_premik(True):
             vsota2 += 100
 
         if self.jaz == self.igra_kopija.na_potezi:
-            vsota2 *= -1
+            vsota2 *= (-1)
         else:
-            vsota1 *= -1
+            vsota1 *= (-1)
+
+        print(vsota1, vsota2)
 
         vsota += vsota1 + vsota2
 
@@ -459,7 +463,6 @@ class Alfabeta():
         return (najboljsa_poteza, vrednost_najboljse)
 
 
-
     def albe_max_uni(self, globina, na_ze_na_vrednost, zap_potez):
     #tu ne moremo uporabiti alba rezanja saj smo še vedno mi napotezi.
 
@@ -542,7 +545,6 @@ class Alfabeta():
                 najboljsa_poteza = (a, b)
 
         return (najboljsa_poteza, vrednost_najboljse)
-
 
 
     def albe_min_uni(self, globina, na_ze_na_vrednost, zap_potez):
