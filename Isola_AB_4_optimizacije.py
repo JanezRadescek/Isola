@@ -23,14 +23,14 @@ NAPIS_IGRALEC2_PREMIK = "Na potezi je ZELENI igralec. Cas je da se premaknes."
 NAPIS_IGRALEC1_UNICENJE = "Na potezi je MODRI igralec. Cas je da unicis polje."
 NAPIS_IGRALEC2_UNICENJE = "Na potezi je ZELENI igralec. Cas je da unicis polje."
 
-NAVODILA = """just kiding \n hahahah \n \n
+NAVODILA = """
 Na polju 7*7 igralca postavita svojo figurico
 na sredino nasprotnih robov. Igralca si izmenjujeta
 poteze. V vsaki potezi se igralec najprej premakne
 za eno polje(kot kralj pri šahu), nato odstrani
-eno polje. Na polja, ki so že bila odstranjena
+eno polje. Na polja, ki so že bila odstranjena,
 se ni dovoljeno premakniti. Cilj igre je odstraniti
-ploščice tako, da se nasprotnik ne more več premakniti."""
+polja tako, da se nasprotnik ne more več premakniti."""
 
 
 def nasprotnik(igralec):
