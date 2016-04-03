@@ -278,6 +278,8 @@ class Alfabeta():
         self.poteza = None
 
         (poteza, vrednost) = self.albe(self.globina, True)
+        print("Najdena poteza je", poteza)
+
         self.jaz = None
         self.igra_kopija = None
 
@@ -340,12 +342,13 @@ class Alfabeta():
 
     def albe_max_pre(self, globina, na_ze_na_vrednost, zap_potez):
 
-        najboljsa_poteza = (None, None)
+        najboljsa_poteza = None
         vrednost_najboljse = -self.NESKONCNO
 
         c = self.igra_kopija.veljavne_poteze()
         if len(c) == 0:
             return (zap_potez[0], -self.NESKONCNO)
+
 
         random.shuffle(c)
 
@@ -375,7 +378,7 @@ class Alfabeta():
 
                 return (None, na_ze_na_vrednost)
 
-            if vrednost > vrednost_najboljse:
+            if vrednost >= vrednost_najboljse:
                 vrednost_najboljse = vrednost
                 najboljsa_poteza = (a, b)
 
@@ -385,7 +388,7 @@ class Alfabeta():
     def albe_max_uni(self, globina, na_ze_na_vrednost, zap_potez):
     #tu ne moremo uporabiti alba rezanja saj smo še vedno mi napotezi.
 
-        najboljsa_poteza = (None, None)
+        najboljsa_poteza = None
         vrednost_najboljse = -self.NESKONCNO
         c = self.igra_kopija.veljavne_poteze()
         random.shuffle(c)
@@ -410,10 +413,11 @@ class Alfabeta():
 
             if (vrednost >= self.NESKONCNO) and (self.poteza_konec == None):         ##našli smo zmagovalno potezo
                 self.poteza_konec = zap_potez[0]
+                return (self.poteza_konec, self.NESKONCNO)
 
 
 
-            if vrednost > vrednost_najboljse:
+            if vrednost >= vrednost_najboljse:
                 vrednost_najboljse = vrednost
                 najboljsa_poteza = (a, b)
 
@@ -422,7 +426,7 @@ class Alfabeta():
 
     def albe_min_pre(self, globina, na_ze_na_vrednost, zap_potez):
 
-        najboljsa_poteza = (None, None)
+        najboljsa_poteza = None
         vrednost_najboljse = self.NESKONCNO
 
         c = self.igra_kopija.veljavne_poteze()
@@ -454,7 +458,7 @@ class Alfabeta():
                 return (None, na_ze_na_vrednost)
 
 
-            if vrednost < vrednost_najboljse:
+            if vrednost <= vrednost_najboljse:
                 vrednost_najboljse = vrednost
                 najboljsa_poteza = (a, b)
 
@@ -465,7 +469,7 @@ class Alfabeta():
         #ne režemo
 
 
-        najboljsa_poteza = (None, None)
+        najboljsa_poteza = None
         vrednost_najboljse = self.NESKONCNO
         c = self.igra_kopija.veljavne_poteze()
         random.shuffle(c)
@@ -491,7 +495,7 @@ class Alfabeta():
             zap_potez.pop()
 
 
-            if vrednost < vrednost_najboljse:
+            if vrednost <= vrednost_najboljse:
                 vrednost_najboljse = vrednost
                 najboljsa_poteza = (a, b)
 
