@@ -778,6 +778,7 @@ class Meni():
         self.plosca.create_text(self.velikost_plosce/2, self.velikost_polja*5, text = navodila)
 
         print("help")
+        
         pass
 
     def close(self):
