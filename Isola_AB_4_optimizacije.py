@@ -202,6 +202,9 @@ class Clovek():
         j = int(event.y / self.gui.velikost_polja)
         self.gui.povleci_potezo(i, j)
 
+    def prekini(self):
+        pass
+
 
 #########################################################     racunalnik    #############################
 
@@ -235,7 +238,7 @@ class Racunalnik():
 
     def prekini(self):
         # To metodo kliče GUI, če je treba prekiniti razmišljanje.
-        if self.mislec:
+        if self.mislec != None:
             logging.debug ("Prekinjamo {0}".format(self.mislec))
             # Algoritmu sporočimo, da mora nehati z razmišljanjem
             self.algoritem.prekini()
@@ -529,6 +532,16 @@ class Gui():
 
         self.izbira_igralcev()
         self.globina = globina
+        self.konec = False
+
+    def unici(self):
+        if self.igralec_1 != None:
+            self.igralec_1.prekini()
+        if self.igralec_2 != None:
+            self.igralec_2.prekini()
+        self.igralec_1 = None
+        self.igralec_2 = None
+        self.konec = True
 
 
 
@@ -556,6 +569,9 @@ class Gui():
 
     def povleci_potezo(self, i, j):
         '''celoten potek poteze'''
+        if self.konec:
+            self.koncaj_igro()
+            return None
 
         if (i, j) in self.igra.veljavne_poteze():
             self.narisi(i, j)
@@ -678,18 +694,27 @@ class Meni():
         self.gumb_close.grid(row=2, column=3)
 
         #naredi igralno ploščo
+        self.aplication2 = None
         self.play()
 
 
     def play(self, event = None):
+        if self.aplication2 != None:
+            self.aplication2.unici()
+
         self.aplication2 = Gui(root, self.velikost_polja, GLOBINA)
-        #sam da vidm kva se zgodi pr manši globini
 
     def options(self):
+        if self.aplication2 != None:
+            self.aplication2.unici()
+
         print("options")
         pass
 
     def help(self):
+        if self.aplication2 != None:
+            self.aplication2.unici()
+
         napis_help = "NAVODILA"
         navodila = NAVODILA
 
