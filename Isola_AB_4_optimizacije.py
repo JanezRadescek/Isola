@@ -515,7 +515,8 @@ class Alfabeta():
 class Gui():
     '''graficni vmesnik'''
 
-    def __init__(self, master, velikost, globina = GLOBINA):
+    def __init__(self, master, velikost, globina = GLOBINA, igralci=["racunalnik","racunalnik"]):
+        self.igralci = igralci
         self.napis = tkinter.StringVar()
         self.napis.set(NAPIS_IGRALEC1_PREMIK)
         #self.napis = tkinter.StringVar(master, value=NAPIS_IGRALEC1)
@@ -542,14 +543,25 @@ class Gui():
         self.igralec_1 = None
         self.igralec_2 = None
         self.konec = True
+        self.plosca.destroy()
 
 
 
     def izbira_igralcev(self):
-        #self.igralec_1 = Clovek(self)
-        self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
-        #self.igralec_2 = Clovek(self)
-        self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
+        if self.igralci == ["igralec", "igralec"]:
+            self.igralec_1 = Clovek(self)
+            self.igralec_2 = Clovek(self)
+        elif self.igralci == ["igralec", "racunalnik"]:
+            self.igralec_1 = Clovek(self)
+            self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
+        elif self.igralci == ["racunalnik", "igralec"]:
+            self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
+            self.igralec_2 = Clovek(self)
+        elif self.igralci == ["racunalnik","racunalnik"]:
+            self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
+            self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
+        else:
+            print("napacni igralci")
         self.zacni_igro()
 
     def zacni_igro(self):
@@ -667,6 +679,8 @@ class Meni():
     def __init__(self, master, velikost_polja):
         self.master = master
         self.velikost_polja = velikost_polja
+        self.igralec1 = "igralec"
+        self.igralec2 = "igralec"
 
         #winsound.PlaySound("files\\two.wav", winsound.SND_ASYNC|winsound.SND_LOOP)
 
@@ -702,14 +716,52 @@ class Meni():
         if self.aplication2 != None:
             self.aplication2.unici()
 
-        self.aplication2 = Gui(root, self.velikost_polja, GLOBINA)
+        self.aplication2 = Gui(root, self.velikost_polja, GLOBINA, [self.igralec1, self.igralec2])
 
     def options(self):
+        #self.plosca.delete("all")
+
+        def izbira_igralcev_pvp():
+            self.igralec1 = "igralec"
+            self.igralec2 = "igralec"
+            self.play()
+
+        def izbira_igralcev_eve():
+            self.igralec1 = "racunalnik"
+            self.igralec2 = "racunalnik"
+            self.play()
+
+        def izbira_igralcev_pve():
+            self.igralec1 = "igralec"
+            self.igralec2 = "racunalnik"
+            self.play()
+
+        def izbira_igralcev_evp():
+            self.igralec1 = "racunalnik"
+            self.igralec2 = "igralec"
+            self.play()
+
+
         if self.aplication2 != None:
             self.aplication2.unici()
 
+        napis_options = "NASTAVITVE"
+
+        self.aplication2.spremeni_napis(napis_options)
+        self.gumb1 = tkinter.Button(self.master, text="PvP", command=izbira_igralcev_pvp, height=(4), width=(10))
+        self.gumb1.grid(row=0, column=0, columnspan=2)
+        self.gumb2 = tkinter.Button(self.master, text="EvE", command=izbira_igralcev_eve, height=(4), width=(10))
+        self.gumb2.grid(row=0, column=1, columnspan=2)
+        self.gumb3 = tkinter.Button(self.master, text="PvE", command=izbira_igralcev_pve, height=(4), width=(10))
+        self.gumb3.grid(row=1, column=0, columnspan=2)
+        self.gumb4 = tkinter.Button(self.master, text="EvP", command=izbira_igralcev_evp, height=(4), width=(10))
+        self.gumb4.grid(row=1, column=1, columnspan=2)
+        self.plosca.delete("all")
+
+
+
         print("options")
-        pass
+
 
     def help(self):
         if self.aplication2 != None:
