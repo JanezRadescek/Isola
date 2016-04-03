@@ -748,15 +748,16 @@ class Meni():
         napis_options = "NASTAVITVE"
 
         self.aplication2.spremeni_napis(napis_options)
-        self.gumb1 = tkinter.Button(self.master, text="PvP", command=izbira_igralcev_pvp, height=(4), width=(10))
+        self.gumb1 = tkinter.Button(self.master, text="PvP", font=("Helvetica", 16), command=izbira_igralcev_pvp, height=(4), width=(10))
         self.gumb1.grid(row=1, column=0, columnspan=2)
-        self.gumb2 = tkinter.Button(self.master, text="EvE", command=izbira_igralcev_eve, height=(4), width=(10))
-        self.gumb2.grid(row=1, column=1, columnspan=2)
-        self.gumb3 = tkinter.Button(self.master, text="PvE", command=izbira_igralcev_pve, height=(4), width=(10))
+        self.gumb2 = tkinter.Button(self.master, text="EvE", font=("Helvetica", 16), command=izbira_igralcev_eve, height=(4), width=(10))
+        self.gumb2.grid(row=1, column=2, columnspan=2)
+        self.gumb3 = tkinter.Button(self.master, text="PvE", font=("Helvetica", 16), command=izbira_igralcev_pve, height=(4), width=(10))
         self.gumb3.grid(row=2, column=0, columnspan=2)
-        self.gumb4 = tkinter.Button(self.master, text="EvP", command=izbira_igralcev_evp, height=(4), width=(10))
-        self.gumb4.grid(row=2, column=1, columnspan=2)
-        self.plosca.delete("all")
+        self.gumb4 = tkinter.Button(self.master, text="EvP", font=("Helvetica", 16), command=izbira_igralcev_evp, height=(4), width=(10))
+        self.gumb4.grid(row=2, column=2, columnspan=2)
+        if self.plosca == None:
+            self.plosca.delete("all")
 
 
 
