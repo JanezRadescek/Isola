@@ -325,11 +325,9 @@ class Alfabeta():
             vsota2 += 100
 
         if self.jaz == self.igra_kopija.na_potezi:
-            vsota2 *= (-1)
+            vsota2 *= -1
         else:
-            vsota1 *= (-1)
-
-        print(vsota1, vsota2)
+            vsota1 *= -1
 
         vsota += vsota1 + vsota2
 
@@ -421,6 +419,7 @@ class Alfabeta():
         vrednost_najboljse = -self.NESKONCNO
 
         c = self.igra_kopija.veljavne_poteze()
+        random.shuffle(c)
         if len(c) == 0:
             print("max_pre ni veljavnih potez")
             return (zap_potez[0], -self.NESKONCNO)
@@ -472,7 +471,7 @@ class Alfabeta():
         vrednost_najboljse = -self.NESKONCNO
         #print("max število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
-
+        random.shuffle(c)
         if len(c) == 0:
             print("max_uni nima veljavnih potez")
 
@@ -511,6 +510,8 @@ class Alfabeta():
         vrednost_najboljse = self.NESKONCNO
 
         c = self.igra_kopija.veljavne_poteze()
+        random.shuffle(c)
+
         if len(c) == 0:
             print("max_pre ni veljavnih potez")
             self.poteza_konec = zap_potez[0]
@@ -555,6 +556,8 @@ class Alfabeta():
         vrednost_najboljse = self.NESKONCNO
         #print("min število veljavnih potez je", len(self.igra_kopija.veljavne_poteze()))
         c = self.igra_kopija.veljavne_poteze()
+        random.shuffle(c)
+
         if len(c) == 0:
             print("min_uni nima veljavnih potez")
 
@@ -617,8 +620,8 @@ class Gui():
 
 
     def izbira_igralcev(self):
-        self.igralec_1 = Clovek(self)
-        #self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
+        #self.igralec_1 = Clovek(self)
+        self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
         #self.igralec_2 = Clovek(self)
         self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
         self.zacni_igro()
