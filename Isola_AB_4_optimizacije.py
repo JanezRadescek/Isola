@@ -185,18 +185,19 @@ class Igra():
 class Clovek():
     '''igralec, ki ga upravlja človek'''
 
-    def __init__(self, gui):
+    def __init__(self, gui, stevilka_igralca=None):
         self.gui = gui
+        self.stevilka_igralca = stevilka_igralca
 
     def igraj(self):
         self.gui.plosca.bind('<Button-1>', self.klik)
 
     def klik(self, event):
         '''shrani koordinate polja kamor kliknemo'''
-
-        i = int(event.x / self.gui.velikost_polja)
-        j = int(event.y / self.gui.velikost_polja)
-        self.gui.povleci_potezo(i, j)
+        if self.gui.igra.na_potezi == self.stevilka_igralca:
+            i = int(event.x / self.gui.velikost_polja)
+            j = int(event.y / self.gui.velikost_polja)
+            self.gui.povleci_potezo(i, j)
 
     def prekini(self):
         pass
@@ -537,14 +538,14 @@ class Gui():
 
     def izbira_igralcev(self):
         if self.igralci == ["igralec", "igralec"]:
-            self.igralec_1 = Clovek(self)
-            self.igralec_2 = Clovek(self)
+            self.igralec_1 = Clovek(self, 1)
+            self.igralec_2 = Clovek(self, 2)
         elif self.igralci == ["igralec", "racunalnik"]:
-            self.igralec_1 = Clovek(self)
+            self.igralec_1 = Clovek(self, 1)
             self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
         elif self.igralci == ["racunalnik", "igralec"]:
             self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
-            self.igralec_2 = Clovek(self)
+            self.igralec_2 = Clovek(self, 2)
         elif self.igralci == ["racunalnik","racunalnik"]:
             self.igralec_1 = Racunalnik(self, Alfabeta(GLOBINA))
             self.igralec_2 = Racunalnik(self, Alfabeta(GLOBINA))
