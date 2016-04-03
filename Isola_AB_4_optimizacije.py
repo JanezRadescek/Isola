@@ -719,7 +719,6 @@ class Meni():
         self.aplication2 = Gui(root, self.velikost_polja, GLOBINA, [self.igralec1, self.igralec2])
 
     def options(self):
-        #self.plosca.delete("all")
 
         def izbira_igralcev_pvp():
             self.igralec1 = "igralec"
@@ -747,16 +746,17 @@ class Meni():
 
         napis_options = "NASTAVITVE"
 
-        self.aplication2.spremeni_napis(napis_options)
-        self.gumb1 = tkinter.Button(self.master, text="PvP", command=izbira_igralcev_pvp, height=(4), width=(10))
-        self.gumb1.grid(row=0, column=0, columnspan=2)
-        self.gumb2 = tkinter.Button(self.master, text="EvE", command=izbira_igralcev_eve, height=(4), width=(10))
-        self.gumb2.grid(row=0, column=1, columnspan=2)
-        self.gumb3 = tkinter.Button(self.master, text="PvE", command=izbira_igralcev_pve, height=(4), width=(10))
-        self.gumb3.grid(row=1, column=0, columnspan=2)
-        self.gumb4 = tkinter.Button(self.master, text="EvP", command=izbira_igralcev_evp, height=(4), width=(10))
-        self.gumb4.grid(row=1, column=1, columnspan=2)
-        self.plosca.delete("all")
+        self.napis_nastavitve = tkinter.Label(self.master, text=napis_options)
+        self.napis_nastavitve.grid(row=0, column=0, columnspan=4)
+        self.gumb1 = tkinter.Button(self.master, text="PvP", command=izbira_igralcev_pvp, font=20)
+        self.gumb1.grid(row=1, column=0, columnspan=2)
+        self.gumb2 = tkinter.Button(self.master, text="EvE", command=izbira_igralcev_eve, font=20)
+        self.gumb2.grid(row=1, column=2, columnspan=2)
+        self.gumb3 = tkinter.Button(self.master, text="PvE", command=izbira_igralcev_pve, font=20)
+        self.gumb3.grid(row=2, column=0, columnspan=2)
+        self.gumb4 = tkinter.Button(self.master, text="EvP", command=izbira_igralcev_evp, font=20)
+        self.gumb4.grid(row=2, column=2, columnspan=2)
+        #self.plosca.delete("all")
 
 
 
