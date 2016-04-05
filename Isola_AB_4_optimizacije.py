@@ -1,7 +1,10 @@
 import tkinter
 import random
 from itertools import product
-import winsound
+try:
+    import winsound
+except:
+    pass
 import logging
 import argparse
 import threading
@@ -669,7 +672,10 @@ class Meni():
         self.igralec1 = "igralec"
         self.igralec2 = "igralec"
 
-        #winsound.PlaySound("files\\two.wav", winsound.SND_ASYNC|winsound.SND_LOOP)
+        try:
+            winsound.PlaySound("files\\two.wav", winsound.SND_ASYNC|winsound.SND_LOOP)
+        except:
+            pass
 
         self.napis = tkinter.StringVar(master, value="Isola!")
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0, columnspan = 4)
@@ -706,7 +712,7 @@ class Meni():
         self.aplication2 = Gui(root, self.velikost_polja, GLOBINA, [self.igralec1, self.igralec2])
 
     def options(self):
-        #self.plosca.delete("all")
+
 
         def izbira_igralcev_pvp():
             self.igralec1 = "igralec"
