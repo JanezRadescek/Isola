@@ -566,8 +566,11 @@ class Gui():
 
     def koncaj_igro(self):
         '''Nastavi stanje igre na konec igre.'''
-
-        self.napis.set("KONEC")
+        if self.igra.na_potezi == 1:
+            zmagovalec = "ZELENI"
+        else:
+            zmagovalec = "MODRI"
+        self.napis.set("KONEC, ZMAGAL JE {}".format(zmagovalec))
 
     def povleci_potezo(self, i, j):
         '''celoten potek poteze'''
@@ -740,7 +743,13 @@ class Meni():
 
         napis_options = "NASTAVITVE"
 
+
         self.aplication2.spremeni_napis(napis_options)
+
+        self.velikost_plosce = 7 * self.velikost_polja
+        self.plosca = tkinter.Canvas(self.master, width=self.velikost_plosce, height=self.velikost_plosce)
+        self.plosca.grid(row=1, column=0, rowspan = 2, columnspan = 4)
+
         self.gumb1 = tkinter.Button(self.master, text="PvP", font=("Helvetica", 16), command=izbira_igralcev_pvp, height=(4), width=(10))
         self.gumb1.grid(row=1, column=0, columnspan=2)
         self.gumb2 = tkinter.Button(self.master, text="EvE", font=("Helvetica", 16), command=izbira_igralcev_eve, height=(4), width=(10))
@@ -749,6 +758,7 @@ class Meni():
         self.gumb3.grid(row=2, column=0, columnspan=2)
         self.gumb4 = tkinter.Button(self.master, text="EvP", font=("Helvetica", 16), command=izbira_igralcev_evp, height=(4), width=(10))
         self.gumb4.grid(row=2, column=2, columnspan=2)
+
         try:
             self.plosca.delete("all")
         except:
