@@ -684,22 +684,22 @@ class Meni():
         tkinter.Label(master, textvariable=self.napis).grid(row=0, column=0, columnspan = 4)
 
         #gumb play
-        master.slika_play = slika_play = tkinter.PhotoImage(file="files\play.png")
+        master.slika_play = slika_play = tkinter.PhotoImage(file="./files/play.png")
         self.gumb_play = tkinter.Button(master, command = self.play, image = slika_play)
         self.gumb_play.grid(row=3, column=0)
 
         #gumb options
-        master.slika_options = slika_options = tkinter.PhotoImage(file="files\options.png")
+        master.slika_options = slika_options = tkinter.PhotoImage(file="./files/options.png")
         self.gumb_options = tkinter.Button(master, command = self.options, image = slika_options)
         self.gumb_options.grid(row=3, column=1)
 
         #gumb help
-        master.slika_help = slika_help = tkinter.PhotoImage(file="files\help.png")
+        master.slika_help = slika_help = tkinter.PhotoImage(file="./files/help.png")
         self.gumb_help = tkinter.Button(master, command = self.help, image = slika_help)
         self.gumb_help.grid(row=3, column=2)
 
         #gumb close
-        master.slika_close = slika_close = tkinter.PhotoImage(file="files\close.png")
+        master.slika_close = slika_close = tkinter.PhotoImage(file="./files/close.png")
         self.gumb_close = tkinter.Button(master, command = self.close, image = slika_close)
         self.gumb_close.grid(row=3, column=3)
 
@@ -774,7 +774,7 @@ class Meni():
         navodila = NAVODILA
 
         self.aplication2.spremeni_napis(napis_help)
-        self.slika_kappa = tkinter.PhotoImage(file="files\kappa.png")
+        self.slika_kappa = tkinter.PhotoImage(file="./files/kappa.png")
         self.velikost_plosce = 7 * self.velikost_polja
         self.plosca = tkinter.Canvas(self.master, width=self.velikost_plosce, height=self.velikost_plosce)
         self.plosca.grid(row=1, column=0, rowspan = 2, columnspan = 4)
